@@ -107,4 +107,17 @@ public class Book implements Serializable{
 			return false;
 		return true;
 	}
+	
+	public String getDescription() {
+		String authorList = "";
+		if (this.authors != null)
+			if (!this.authors.isEmpty())
+				for (Author a : authors) {
+					authorList += (a.getAuthorName() + ", ");
+				}
+		if (!authorList.equals("")) {
+			authorList = authorList.substring(0, authorList.length() - 2);
+		}
+		return this.getTitle() + " by " + authorList;
+	}
 }

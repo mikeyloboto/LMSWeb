@@ -8,7 +8,7 @@ public class ConnectionUtil {
 	private static String usrName = "javaUser";
 	private static String password = "javaPass";
 	private static String url = "jdbc:mysql://localhost/library";
-	private static String driver = "com.mysql.jdbc.Driver";
+	private static String driver = "com.mysql.cj.jdbc.Driver";
 	
 	public static Connection getConnection() throws ClassNotFoundException, SQLException{
 		Class.forName(driver);

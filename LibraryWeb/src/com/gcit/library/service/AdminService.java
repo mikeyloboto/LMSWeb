@@ -2,6 +2,7 @@ package com.gcit.library.service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import com.gcit.library.dao.AuthorDAO;
 import com.gcit.library.dao.BookDAO;
@@ -58,5 +59,52 @@ public class AdminService {
 			}
 		}
 	}
+	
+	public List<Author> getAllAuthors() throws SQLException{
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			AuthorDAO adao = new AuthorDAO(conn);
+			return adao.readAllAuthors();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
+	public List<Book> getAllBooks() throws SQLException{
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BookDAO bdao = new BookDAO(conn);
+			return bdao.readAllBooks();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+		return null;
+	}
 
+	public Book getBookFromID(Integer id) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BookDAO bdao = new BookDAO(conn);
+			return bdao.readBookFromId(id);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+		return null;
+	}
 }

@@ -16,7 +16,7 @@ import com.gcit.library.service.AdminService;
 /**
  * Servlet implementation class AdminServlet
  */
-@WebServlet("/AdminServlet")
+@WebServlet("/admin/removeBook")
 public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -39,17 +39,27 @@ public class AdminServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Author author = new Author();
-		author.setAuthorName(request.getParameter("authorName"));
-		AdminService service = new AdminService();
-		try {
-			service.addAuthor(author);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		RequestDispatcher rd = request.getRequestDispatcher("/viewauthors.jsp");
+		//Author author = new Author();
+//		author.setAuthorName(request.getParameter("authorName"));
+//		AdminService service = new AdminService();
+//		try {
+//			service.addAuthor(author);
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+
+		String command = request.getParameter("name");
+		String value = request.getParameter("value");
+		System.out.println(command + " " + value);
+		//if (command.equals("editButton")) {
+			//forward
+	//	}
+		//if (command.equals("removeButton")) {
+			// Remove
+			
+		//}
+		RequestDispatcher rd = request.getRequestDispatcher("/admin/bookmanage.jsp");
 		rd.forward(request, response);
 	}
 
