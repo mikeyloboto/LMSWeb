@@ -83,16 +83,21 @@ public class BookDAO extends BaseDAO {
 		return map;
 	}
 
-	public List<Book> readAllBooks() throws ClassNotFoundException, SQLException {
+	public List<Book> readAllBooks(Integer pageNo) throws ClassNotFoundException, SQLException {
+		setPageNo(pageNo);
 		return read("select * from tbl_book", null);
 
 	}
 
 	public Book readBookFromId(Integer id) throws ClassNotFoundException, SQLException {
-		List<Book> books = read("select * from tbl_book where bookId = ?", new Object[]{id});
+		List<Book> books = read("select * from tbl_book where bookId = ?", new Object[] { id });
 		if (books != null && !books.isEmpty()) {
 			return books.get(0);
 		}
 		return null;
+	}
+
+	public Integer readBookCount() throws ClassNotFoundException, SQLException {
+		return readInt("select count(*) as COUNT from tbl_book", null);
 	}
 }

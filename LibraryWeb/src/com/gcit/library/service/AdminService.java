@@ -60,12 +60,12 @@ public class AdminService {
 		}
 	}
 	
-	public List<Author> getAllAuthors() throws SQLException{
+	public List<Author> getAllAuthors(Integer pageNo) throws SQLException{
 		Connection conn = null;
 		try {
 			conn = ConnectionUtil.getConnection();
 			AuthorDAO adao = new AuthorDAO(conn);
-			return adao.readAllAuthors();
+			return adao.readAllAuthors(pageNo);
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		} finally{
@@ -76,12 +76,12 @@ public class AdminService {
 		return null;
 	}
 	
-	public List<Book> getAllBooks() throws SQLException{
+	public List<Book> getAllBooks(Integer pageNo) throws SQLException{
 		Connection conn = null;
 		try {
 			conn = ConnectionUtil.getConnection();
 			BookDAO bdao = new BookDAO(conn);
-			return bdao.readAllBooks();
+			return bdao.readAllBooks(pageNo);
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		} finally{
@@ -98,6 +98,22 @@ public class AdminService {
 			conn = ConnectionUtil.getConnection();
 			BookDAO bdao = new BookDAO(conn);
 			return bdao.readBookFromId(id);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
+	public Integer getBookCount() throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BookDAO bdao = new BookDAO(conn);
+			return bdao.readBookCount();
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		} finally{
