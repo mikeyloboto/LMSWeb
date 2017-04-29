@@ -23,7 +23,16 @@
 	}
 %>
 ${message}
-<div>
+<ol class="breadcrumb">
+  <li><a href="index.jsp">Home</a></li>
+  <li><a href="admin.jsp">Administrator</a></li>
+  <li class="active">Book Management</li>
+</ol>
+<div class="container">
+	<div>
+		<button type="button" class="btn btn-success" data-toggle="modal"
+			data-target="#editBookModal" href="adminBookAdd.jsp">Add New
+			Book</button>
 	<div class="page-header">
 		<h1>List of Existing Books in LMS</h1>
 	</div>
@@ -43,11 +52,13 @@ ${message}
 			</a></li>
 		</ul>
 	</nav>
-	<table class="table">
+	<table class="table table-striped">
 		<thead>
 			<tr>
 				<th>#</th>
 				<th>Book Name</th>
+				<th>Genre(s)</th>
+				<th>Publisher</th>
 				<th>Actions</th>
 				<!-- <th>Delete</th> -->
 			</tr>
@@ -70,11 +81,13 @@ ${message}
 				%>
 				<td><%=id%></td>
 				<td><%=b.getDescription()%></td>
+				<td><%=b.getGenreList() %></td>
+				<td><%=b.getPublisher().getPublisherName() %></td>
 				<td><button type="button" class="btn btn-primary"
 						data-toggle="modal" data-target="#editBookModal"
 						href="adminBookEdit.jsp?bookId=<%=b.getBookId()%>&pageNo=<%=pageNo%>">Update</button>
-					<button type="button" class="btn btn-danger"
-						href="deleteBook?bookId=<%=b.getBookId()%>">Delete</button></td>
+					<a type="button" class="btn btn-danger"
+						href="removeBook?bookId=<%=b.getBookId()%>">Delete</a></td>
 			</tr>
 			<%
 				}
@@ -88,6 +101,13 @@ ${message}
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">....</div>
 	</div>
+</div>
+<div class="modal fade bs-example-modal-lg" id="addBookModal"
+	tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">....</div>
+	</div>
+</div>
 </div>
 <script>
 	$(document).ready(function() {

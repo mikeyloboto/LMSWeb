@@ -58,7 +58,7 @@ public abstract class BaseDAO {
 				count++;
 			}
 		}
-		pstmt.executeUpdate();
+		System.out.println(pstmt.executeUpdate());
 	}
 
 	public Integer saveWithID(String query, Object[] vals) throws ClassNotFoundException, SQLException {
@@ -97,7 +97,8 @@ public abstract class BaseDAO {
 		if (getPageNo() != null) {
 			index = (getPageNo() - 1) * 10;
 		}
-		query = query + " LIMIT " + index + ", " + pageSize;
+		if (getPageNo() != null)
+			query = query + " LIMIT " + index + ", " + pageSize;
 		PreparedStatement pstmt = conn.prepareStatement(query);
 		if (vals != null) {
 			int count = 1;

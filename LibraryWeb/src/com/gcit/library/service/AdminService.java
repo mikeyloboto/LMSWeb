@@ -7,9 +7,11 @@ import java.util.List;
 import com.gcit.library.dao.AuthorDAO;
 import com.gcit.library.dao.BookDAO;
 import com.gcit.library.dao.GenreDAO;
+import com.gcit.library.dao.PublisherDAO;
 import com.gcit.library.entity.Author;
 import com.gcit.library.entity.Book;
 import com.gcit.library.entity.Genre;
+import com.gcit.library.entity.Publisher;
 
 public class AdminService {
 
@@ -38,7 +40,8 @@ public class AdminService {
 			Integer bookId = bdao.addBookWithID(book);
 			if (book.getAuthors() != null && !book.getAuthors().isEmpty()) {
 				for (Author a : book.getAuthors()) {
-					bdao.addBookAuthors(book.getBookId(), a.getAuthorId());
+					System.out.println(a.getAuthorId());
+					bdao.addBookAuthors(bookId, a.getAuthorId());
 				}
 			}
 			// repeat for Genres
@@ -91,6 +94,40 @@ public class AdminService {
 		}
 		return null;
 	}
+	
+	public List<Genre> getAllGenres(Integer pageNo) throws SQLException{
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			GenreDAO gdao = new GenreDAO(conn);
+			return gdao.readAllGenres(pageNo);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
+	public List<Publisher> getAllPublishers(Integer pageNo) throws SQLException{
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			PublisherDAO pdao = new PublisherDAO(conn);
+			return pdao.readAllPublishers(pageNo);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
+	
 
 	public Book getBookFromID(Integer id) throws SQLException {
 		Connection conn = null;
@@ -122,5 +159,55 @@ public class AdminService {
 			}
 		}
 		return null;
+	}
+
+	public void removeBook(Integer bookId) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BookDAO bdao = new BookDAO(conn);
+			bdao.deleteBook(bookId);
+			conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+	}
+
+	public void modBook(Book book) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BookDAO bdao = new BookDAO(conn);
+			//Integer bookId = bdao.addBookWithID(book);
+			bdao.updateBookPublisher(book);
+			bdao.removeBookAuthors(book.getBookId());
+			if (book.getAuthors() != null && !book.getAuthors().isEmpty()) {
+				for (Author a : book.getAuthors()) {
+					System.out.println(a.getAuthorId());
+					bdao.addBookAuthors(book.getBookId(), a.getAuthorId());
+				}
+			}
+			// repeat for Genres
+			GenreDAO gdao = new GenreDAO(conn);
+			gdao.removeBookGenres(book.getBookId());
+			if (book.getGenres() != null && !book.getGenres().isEmpty()) {
+				for (Genre g : book.getGenres()) {
+					gdao.addBookGenre(g, book.getBookId());
+				}
+			}
+			// repeat for Publisher
+			conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
 	}
 }

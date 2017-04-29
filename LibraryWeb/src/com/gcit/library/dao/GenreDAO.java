@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gcit.library.entity.Book;
 import com.gcit.library.entity.Genre;
 
 public class GenreDAO extends BaseDAO
@@ -35,7 +36,13 @@ public class GenreDAO extends BaseDAO
 	}
 	
 	public void deleteGenre(Genre genre) throws ClassNotFoundException, SQLException{
-		save("delete * from tbl_genre where genre_id = ?", new Object[] {genre.getGenreId()});
+		save("delete from tbl_genre where genre_id = ?", new Object[] {genre.getGenreId()});
+	}
+	
+	public List<Genre> readAllGenres(Integer pageNo) throws ClassNotFoundException, SQLException {
+		setPageNo(pageNo);
+		return read("select * from tbl_genre", null);
+
 	}
 
 	@Override
@@ -62,6 +69,10 @@ public class GenreDAO extends BaseDAO
 			genres.add(b);
 		}
 		return genres;
+	}
+
+	public void removeBookGenres(Integer bookId) throws ClassNotFoundException, SQLException {
+		save("delete from tbl_book_genres where bookId = ?", new Object[] {bookId});
 	}
 
 }

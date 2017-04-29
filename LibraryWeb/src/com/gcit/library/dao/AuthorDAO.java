@@ -24,7 +24,7 @@ public class AuthorDAO extends BaseDAO{
 	}
 	
 	public void deleteAuthor(Author author) throws ClassNotFoundException, SQLException{
-		save("delete * from tbl_author where authorId = ?", new Object[] {author.getAuthorId()});
+		save("delete from tbl_author where authorId = ?", new Object[] {author.getAuthorId()});
 	}
 	
 	public List<Author> readAllAuthors(Integer pageNo) throws ClassNotFoundException, SQLException{

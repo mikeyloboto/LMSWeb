@@ -120,4 +120,17 @@ public class Book implements Serializable{
 		}
 		return this.getTitle() + " by " + authorList;
 	}
+	
+	public String getGenreList() {
+		String genreList = "";
+		if (this.genres != null)
+			if (!this.genres.isEmpty())
+				for (Genre g : genres) {
+					genreList += (g.getGenreName() + ", ");
+				}
+		if (!genreList.equals("")) {
+			genreList = genreList.substring(0, genreList.length() - 2);
+		}
+		return genreList;
+	}
 }

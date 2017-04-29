@@ -29,7 +29,7 @@ public class BranchDAO extends BaseDAO{
 	}
 	
 	public void deleteBranch(Branch branch) throws ClassNotFoundException, SQLException{
-		save("delete * from tbl_library_branch where branchId = ?", new Object[] {branch.getBranchNo()});
+		save("delete from tbl_library_branch where branchId = ?", new Object[] {branch.getBranchNo()});
 	}
 
 	@Override

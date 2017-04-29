@@ -19,11 +19,13 @@ public class BookDAO extends BaseDAO {
 	}
 
 	public void addBook(Book book) throws ClassNotFoundException, SQLException {
-		save("insert into tbl_book (title) values (?)", new Object[] { book.getTitle() });
+		save("insert into tbl_book (title, pubId) values (?, ?)",
+				new Object[] { book.getTitle(), book.getPublisher().getPublisherId() });
 	}
 
 	public Integer addBookWithID(Book book) throws ClassNotFoundException, SQLException {
-		return saveWithID("insert into tbl_book (title) values (?)", new Object[] { book.getTitle() });
+		return saveWithID("insert into tbl_book (title, pubId) values (?, ?)",
+				new Object[] { book.getTitle(), book.getPublisher().getPublisherId() });
 	}
 
 	public void addBookAuthors(Integer bookId, Integer authorId) throws ClassNotFoundException, SQLException {
@@ -35,7 +37,12 @@ public class BookDAO extends BaseDAO {
 	}
 
 	public void deleteBook(Book book) throws ClassNotFoundException, SQLException {
-		save("delete * from tbl_book where bookId = ?", new Object[] { book.getBookId() });
+		save("delete from tbl_book where bookId = ?", new Object[] { book.getBookId() });
+	}
+
+	public void deleteBook(Integer bookId) throws ClassNotFoundException, SQLException {
+		System.out.println("deleting");
+		save("delete from tbl_book where bookId = ?", new Object[] { bookId });
 	}
 
 	public Integer getBookCopies(Book book, Branch branch) throws ClassNotFoundException, SQLException {
@@ -47,12 +54,18 @@ public class BookDAO extends BaseDAO {
 	public List<Book> extractData(ResultSet rs) throws SQLException, ClassNotFoundException {
 		List<Book> books = new ArrayList<>();
 		AuthorDAO adao = new AuthorDAO(conn);
+		PublisherDAO pdao = new PublisherDAO(conn);
+		GenreDAO gdao = new GenreDAO(conn);
 		while (rs.next()) {
 			Book b = new Book();
 			b.setTitle(rs.getString("title"));
 			b.setBookId(rs.getInt("bookId"));
 			b.setAuthors(adao.readFirstLevel(
 					"select * from tbl_author where authorId IN (Select authorId from tbl_book_authors where bookId = ?)",
+					new Object[] { b.getBookId() }));
+			b.setPublisher(pdao.readPublisherByID(rs.getInt("pubId")));
+			b.setGenres(gdao.readFirstLevel(
+					"select * from tbl_genre where genre_id IN (select genre_id from tbl_book_genres where bookId = ?)",
 					new Object[] { b.getBookId() }));
 			books.add(b);
 		}
@@ -100,4 +113,14 @@ public class BookDAO extends BaseDAO {
 	public Integer readBookCount() throws ClassNotFoundException, SQLException {
 		return readInt("select count(*) as COUNT from tbl_book", null);
 	}
+
+	public void removeBookAuthors(Integer bookId) throws ClassNotFoundException, SQLException {
+		save("delete from tbl_book_authors where bookId = ?", new Object[] { bookId });
+	}
+
+	public void updateBookPublisher(Book book) throws ClassNotFoundException, SQLException {
+		save("update tbl_book set pubId = ? where bookId = ?",
+				new Object[] { book.getPublisher().getPublisherId(), book.getBookId() });
+	}
+
 }
