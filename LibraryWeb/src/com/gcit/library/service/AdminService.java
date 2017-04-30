@@ -80,6 +80,23 @@ public class AdminService {
 		}
 	}
 	
+	public void addPublisher(Publisher p) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			PublisherDAO pdao = new PublisherDAO(conn);
+			pdao.addPublisher(p);
+			conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+	
 	public List<Author> getAllAuthors(Integer pageNo) throws SQLException{
 		Connection conn = null;
 		try {
@@ -194,6 +211,22 @@ public class AdminService {
 		return null;
 	}
 	
+	public Publisher getPublisherFromID(Integer id) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			PublisherDAO pdao = new PublisherDAO(conn);
+			return pdao.readPublisherByID(id);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
 	public Integer getBookCount() throws SQLException {
 		Connection conn = null;
 		try {
@@ -242,6 +275,23 @@ public class AdminService {
 		}
 		return null;
 	}
+	
+	public Integer getPublisherCount() throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			PublisherDAO pdao = new PublisherDAO(conn);
+			return pdao.getPublisherCount();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
 	public void removeBook(Integer bookId) throws SQLException {
 		Connection conn = null;
 		try {
@@ -279,6 +329,23 @@ public class AdminService {
 			conn = ConnectionUtil.getConnection();
 			GenreDAO gdao = new GenreDAO(conn);
 			gdao.deleteGenre(genreId);
+			conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+	}
+	
+
+	public void removePublisher(Integer publisherId) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			PublisherDAO pdao = new PublisherDAO(conn);
+			pdao.deletePublisher(publisherId);
 			conn.commit();
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
@@ -348,6 +415,24 @@ public class AdminService {
 			GenreDAO gdao = new GenreDAO(conn);
 			//Integer bookId = bdao.addBookWithID(book);
 			gdao.updateGenre(g);
+			conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+
+	public void modPublisher(Publisher p) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			PublisherDAO pdao = new PublisherDAO(conn);
+			//Integer bookId = bdao.addBookWithID(book);
+			pdao.updatePublisher(p);
 			conn.commit();
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();

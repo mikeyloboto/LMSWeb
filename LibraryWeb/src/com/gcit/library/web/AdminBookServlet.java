@@ -102,10 +102,10 @@ public class AdminBookServlet extends HttpServlet {
 			service.removeBook(bookId);
 			request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Book successfully deleted. </div>");
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
+			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
 	}
@@ -146,7 +146,7 @@ public class AdminBookServlet extends HttpServlet {
 		try {
 			service.modBook(book);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
 		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Book details successfully updated. </div>");
@@ -188,7 +188,7 @@ public class AdminBookServlet extends HttpServlet {
 		try {
 			service.addBook(book);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
 		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Book successfully added. </div>");

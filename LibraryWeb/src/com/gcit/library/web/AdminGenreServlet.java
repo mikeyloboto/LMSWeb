@@ -99,10 +99,10 @@ public class AdminGenreServlet extends HttpServlet {
 			service.removeGenre(genreId);
 			request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Genre successfully deleted. </div>");
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
+			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
 	}
@@ -116,7 +116,7 @@ public class AdminGenreServlet extends HttpServlet {
 		try {
 			service.modGenre(g);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
 		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Genre details successfully updated. </div>");
@@ -130,7 +130,7 @@ public class AdminGenreServlet extends HttpServlet {
 		try {
 			service.addGenre(g);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
 		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Genre successfully added. </div>");

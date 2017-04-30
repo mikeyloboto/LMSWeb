@@ -88,6 +88,21 @@
 				</div>
 			</div>
 		</div>
+			<div class="col-sm-4">
+
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">Manage Borrowers</h3>
+				</div>
+				<div class="panel-body">
+					<p>Add / Delete / Modify Borrowers</p>
+					<p>
+						<a type="button" class="btn btn-primary"
+							href="adminBorrowerManage.jsp">Borrower Management</a>
+					</p>
+				</div>
+			</div>
+		</div>
 		<div class="col-sm-4">
 
 

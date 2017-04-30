@@ -14,21 +14,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.gcit.library.entity.Author;
 import com.gcit.library.entity.Book;
-import com.gcit.library.entity.Genre;
+import com.gcit.library.entity.Publisher;
 import com.gcit.library.entity.Publisher;
 import com.gcit.library.service.AdminService;
 
 /**
  * Servlet implementation class AdminServlet
  */
-@WebServlet({ "/addAuthor", "/editAuthor", "/removeAuthor", "/searchAuthors" })
-public class AdminAuthorServlet extends HttpServlet {
+@WebServlet({ "/addPublisher", "/editPublisher", "/removePublisher", "/searchPublishers" })
+public class AdminPublisherServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public AdminAuthorServlet() {
+	public AdminPublisherServlet() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -41,22 +41,22 @@ public class AdminAuthorServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String reqUrl = request.getRequestURI().substring(request.getContextPath().length(),
 				request.getRequestURI().length());
-		String forwardPath = "/adminAuthorManage.jsp";
+		String forwardPath = "/adminPublisherManage.jsp";
 		Boolean isAjax = Boolean.FALSE;
 		switch (reqUrl) {
 
-		case "/pageAuthors":
+		case "/pagePublishers":
 			//pageAuthors(request);
-			forwardPath = "/adminAuthorManage.jsp";
+			forwardPath = "/adminPublisherManage.jsp";
 			break;
-		case "/searchAuthors":
+		case "/searchPublishers":
 			//String data = searchAuthors(request);
 		//	response.getWriter().write(data);
 			// forwardPath = "/viewauthors.jsp";
 			isAjax = Boolean.TRUE;
 			break;
-		case "/removeAuthor":
-			removeAuthor(request);
+		case "/removePublisher":
+			removePublisher(request);
 			break;
 		default:
 			break;
@@ -75,14 +75,14 @@ public class AdminAuthorServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String reqUrl = request.getRequestURI().substring(request.getContextPath().length(),
 				request.getRequestURI().length());
-		String forwardPath = "/adminAuthorManage.jsp";
+		String forwardPath = "/adminPublisherManage.jsp";
 		switch (reqUrl) {
 
-		case "/addAuthor":
-			addAuthor(request);
+		case "/addPublisher":
+			addPublisher(request);
 			break;
-		case "/editAuthor":
-			editAuthor(request);
+		case "/editPublisher":
+			editPublisher(request);
 			break;
 		default:
 			break;
@@ -91,13 +91,13 @@ public class AdminAuthorServlet extends HttpServlet {
 		rd.forward(request, response);
 	}
 
-	private void removeAuthor(HttpServletRequest request) {
+	private void removePublisher(HttpServletRequest request) {
 		// TODO Auto-generated method stub
 		AdminService service = new AdminService();
 		try {
-			Integer authorId = Integer.parseInt((String)request.getParameter("authorId"));
-			service.removeAuthor(authorId);
-			request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Author successfully deleted. </div>");
+			Integer publisherId = Integer.parseInt((String)request.getParameter("publisherId"));
+			service.removePublisher(publisherId);
+			request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Publisher successfully deleted. </div>");
 		} catch (NumberFormatException e) {
 			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
@@ -107,33 +107,36 @@ public class AdminAuthorServlet extends HttpServlet {
 		}
 	}
 
-	private void editAuthor(HttpServletRequest request) {
-		Author author = new Author();
-		author.setAuthorId(Integer.parseInt(request.getParameter("authorId")));
-		author.setAuthorName(request.getParameter("authorName"));
+	private void editPublisher(HttpServletRequest request) {
+		Publisher g = new Publisher();
+		g.setPublisherId(Integer.parseInt(request.getParameter("publisherId")));
+		g.setPublisherName(request.getParameter("publisherName"));
+		g.setPublisherAddress(request.getParameter("publisherAddress"));
+		g.setPublisherPhone(request.getParameter("publisherPhone"));
 
 		AdminService service = new AdminService();
 		try {
-			service.modAuthor(author);
+			service.modPublisher(g);
 		} catch (SQLException e) {
 			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
-		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Author details successfully updated. </div>");
+		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Publisher details successfully updated. </div>");
 	}
 
-	private void addAuthor(HttpServletRequest request) {
-		// TODO Auto-generated method stub
-		Author a = new Author();
-		a.setAuthorName(request.getParameter("authorName"));
+	private void addPublisher(HttpServletRequest request) {
+		Publisher g = new Publisher();
+		g.setPublisherName(request.getParameter("publisherName"));
+		g.setPublisherAddress(request.getParameter("publisherAddress"));
+		g.setPublisherPhone(request.getParameter("publisherPhone"));
 		AdminService service = new AdminService();
 		try {
-			service.addAuthor(a);
+			service.addPublisher(g);
 		} catch (SQLException e) {
 			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
-		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Author successfully added. </div>");
+		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Publisher successfully added. </div>");
 	}
 
 }
