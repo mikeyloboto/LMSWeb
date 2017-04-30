@@ -55,7 +55,9 @@ public class AdminLoanServlet extends HttpServlet {
 			// forwardPath = "/viewauthors.jsp";
 			isAjax = Boolean.TRUE;
 			break;
-		
+		case "/closeLoan":
+			closeLoan(request);
+			break;
 		default:
 			break;
 		}
@@ -82,9 +84,6 @@ public class AdminLoanServlet extends HttpServlet {
 		case "/editLoan":
 			editLoan(request);
 			break;
-		case "/closeLoan":
-			closeLoan(request);
-			break;
 		default:
 			break;
 		}
@@ -93,8 +92,30 @@ public class AdminLoanServlet extends HttpServlet {
 	}
 
 	private void closeLoan(HttpServletRequest request) {
-		// TODO Auto-generated method stub
+		Loan g = new Loan();
+		Book book = new Book();
+		book.setBookId(Integer.parseInt(request.getParameter("bookId")));
+		g.setBook(book);
+		Borrower borrower = new Borrower();
+		borrower.setCardNo(Integer.parseInt(request.getParameter("cardNo")));
+		g.setBorrower(borrower);
+		Branch branch = new Branch();
+		branch.setBranchNo(Integer.parseInt(request.getParameter("branchNo")));
+		g.setBranch(branch);
+		LocalDateTime dateOut = LocalDateTime.parse(request.getParameter("dateOut"));
+		g.setDateOut(dateOut);
+		LocalDate dueDate = LocalDate.parse(request.getParameter("dueDate"));
+		g.setDateDue(dueDate);
+		g.setDateIn(LocalDate.now());
 		
+		AdminService service = new AdminService();
+		try {
+			service.modLoan(g);
+		} catch (SQLException e) {
+			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
+			e.printStackTrace();
+		}
+		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Loan successfully closed. </div>");
 	}
 
 	private void editLoan(HttpServletRequest request) {
@@ -112,8 +133,7 @@ public class AdminLoanServlet extends HttpServlet {
 		g.setDateOut(dateOut);
 		LocalDate dueDate = LocalDate.parse(request.getParameter("dueDate"));
 		g.setDateDue(dueDate);
-		LocalDate dateIn = LocalDate.parse(request.getParameter("dateIn"));
-		g.setDateIn(dateIn);
+		g.setDateIn(null);
 		
 		AdminService service = new AdminService();
 		try {

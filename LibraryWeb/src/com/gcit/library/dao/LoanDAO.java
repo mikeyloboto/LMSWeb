@@ -26,8 +26,15 @@ public class LoanDAO extends BaseDAO {
 	}
 
 	public void updateLoan(Loan loan) throws ClassNotFoundException, SQLException {
+		// Workaround for an annoying null pointer
+		Date dateIn;
+		if (loan.getDateIn() == null)
+			dateIn = null;
+		else
+			dateIn = Date.valueOf(loan.getDateIn());
+		
 		save("update tbl_book_loans set dueDate = ?, dateIn = ? where bookId = ? and branchId = ? and cardNo = ? and dateOut = ?",
-				new Object[] { Date.valueOf(loan.getDateDue()), Date.valueOf(loan.getDateIn()),
+				new Object[] { Date.valueOf(loan.getDateDue()), dateIn,
 						loan.getBook().getBookId(), loan.getBranch().getBranchNo(), loan.getBorrower().getCardNo(),
 						Timestamp.valueOf(loan.getDateOut()) });
 	}
@@ -40,7 +47,7 @@ public class LoanDAO extends BaseDAO {
 
 	public List<Loan> readAllLoans(Integer pageNo) throws ClassNotFoundException, SQLException {
 		setPageNo(pageNo);
-		return read("select * from tbl_book_loans", null);
+		return read("select * from tbl_book_loans where dateIn is null", null);
 	}
 
 	public List<Loan> readLoansByCardNo(Integer cardNo, Integer pageNo) throws ClassNotFoundException, SQLException {
@@ -58,11 +65,15 @@ public class LoanDAO extends BaseDAO {
 			BranchDAO brdao = new BranchDAO(conn);
 			Loan a = new Loan();
 			a.setBook(bdao.readBookFromId(rs.getInt("bookId")));
-			a.setBorrower(bordao.readBorrowerByID(rs.getInt("branchId")));
-			a.setBranch(brdao.readBranchByID(rs.getInt("cardNo")));
+			a.setBorrower(bordao.readBorrowerByID(rs.getInt("cardNo")));
+			a.setBranch(brdao.readBranchByID(rs.getInt("branchId")));
 			a.setDateOut(rs.getTimestamp("dateOut").toLocalDateTime());
 			a.setDateDue(rs.getDate("dueDate").toLocalDate());
-			a.setDateIn(rs.getDate("dateIn").toLocalDate());
+			Date dateTemp = rs.getDate("dateIn");
+			if (dateTemp != null)
+				a.setDateIn(rs.getDate("dateIn").toLocalDate());
+			else
+				a.setDateIn(null);
 			loans.add(a);
 		}
 		return loans;
@@ -77,8 +88,8 @@ public class LoanDAO extends BaseDAO {
 			BranchDAO brdao = new BranchDAO(conn);
 			Loan a = new Loan();
 			a.setBook(bdao.readBookFromId(rs.getInt("bookId")));
-			a.setBorrower(bordao.readBorrowerByID(rs.getInt("branchId")));
-			a.setBranch(brdao.readBranchByID(rs.getInt("cardNo")));
+			a.setBorrower(bordao.readBorrowerByID(rs.getInt("cardNo")));
+			a.setBranch(brdao.readBranchByID(rs.getInt("branchId")));
 			a.setDateOut(rs.getTimestamp("dateOut").toLocalDateTime());
 			a.setDateDue(rs.getDate("dueDate").toLocalDate());
 			a.setDateIn(rs.getDate("dateIn").toLocalDate());
@@ -89,6 +100,10 @@ public class LoanDAO extends BaseDAO {
 
 	public Integer getLoanCount() throws ClassNotFoundException, SQLException {
 		return readInt("select count(*) as COUNT from tbl_book_loans where dateIn IS NULL", null);
+	}
+
+	public Loan expandLoan(Loan loan) throws ClassNotFoundException, SQLException {
+		return (Loan)read("select * from tbl_book_loans where cardNo = ? and branchId = ? and bookId = ? and dateOut = ?", new Object[] {loan.getBorrower().getCardNo(), loan.getBranch().getBranchNo(), loan.getBook().getBookId(), Timestamp.valueOf(loan.getDateOut())}).get(0);
 	}
 
 }

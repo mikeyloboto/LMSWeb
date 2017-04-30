@@ -250,6 +250,22 @@ public class AdminService {
 		return null;
 	}
 
+	public List<Loan> getAllLoans(Integer pageNo) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			LoanDAO ldao = new LoanDAO(conn);
+			return ldao.readAllLoans(pageNo);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
 	public Book getBookFromID(Integer id) throws SQLException {
 		Connection conn = null;
 		try {
@@ -346,6 +362,22 @@ public class AdminService {
 		return null;
 	}
 
+	public Loan expandLoan(Loan loan) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			LoanDAO ldao = new LoanDAO(conn);
+			return ldao.expandLoan(loan);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
 	public Integer getBookCount() throws SQLException {
 		Connection conn = null;
 		try {
@@ -432,6 +464,22 @@ public class AdminService {
 			conn = ConnectionUtil.getConnection();
 			BorrowerDAO brdao = new BorrowerDAO(conn);
 			return brdao.getBorrowerCount();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
+	public Integer getLoanCount() throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			LoanDAO ldao = new LoanDAO(conn);
+			return ldao.getLoanCount();
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		} finally {
