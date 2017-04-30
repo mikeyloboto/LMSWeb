@@ -58,7 +58,7 @@ public abstract class BaseDAO {
 				count++;
 			}
 		}
-		System.out.println(pstmt.executeUpdate());
+		pstmt.executeUpdate();
 	}
 
 	public Integer saveWithID(String query, Object[] vals) throws ClassNotFoundException, SQLException {

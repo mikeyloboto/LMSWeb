@@ -10,20 +10,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.gcit.library.entity.Author;
+import com.gcit.library.entity.Branch;
 import com.gcit.library.service.AdminService;
 
 /**
  * Servlet implementation class AdminServlet
  */
-@WebServlet({ "/addAuthor", "/editAuthor", "/removeAuthor", "/searchAuthors" })
-public class AdminAuthorServlet extends HttpServlet {
+@WebServlet({ "/addBranch", "/editBranch", "/removeBranch", "/searchBranches" })
+public class AdminBranchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public AdminAuthorServlet() {
+	public AdminBranchServlet() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -36,22 +36,22 @@ public class AdminAuthorServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String reqUrl = request.getRequestURI().substring(request.getContextPath().length(),
 				request.getRequestURI().length());
-		String forwardPath = "/adminAuthorManage.jsp";
+		String forwardPath = "/adminBranchManage.jsp";
 		Boolean isAjax = Boolean.FALSE;
 		switch (reqUrl) {
 
-		case "/pageAuthors":
+		case "/pageBranches":
 			//pageAuthors(request);
-			forwardPath = "/adminAuthorManage.jsp";
+			forwardPath = "/adminBranchManage.jsp";
 			break;
-		case "/searchAuthors":
+		case "/searchBranches":
 			//String data = searchAuthors(request);
 		//	response.getWriter().write(data);
 			// forwardPath = "/viewauthors.jsp";
 			isAjax = Boolean.TRUE;
 			break;
-		case "/removeAuthor":
-			removeAuthor(request);
+		case "/removeBranch":
+			removeBranch(request);
 			break;
 		default:
 			break;
@@ -70,14 +70,14 @@ public class AdminAuthorServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String reqUrl = request.getRequestURI().substring(request.getContextPath().length(),
 				request.getRequestURI().length());
-		String forwardPath = "/adminAuthorManage.jsp";
+		String forwardPath = "/adminBranchManage.jsp";
 		switch (reqUrl) {
 
-		case "/addAuthor":
-			addAuthor(request);
+		case "/addBranch":
+			addBranch(request);
 			break;
-		case "/editAuthor":
-			editAuthor(request);
+		case "/editBranch":
+			editBranch(request);
 			break;
 		default:
 			break;
@@ -86,13 +86,13 @@ public class AdminAuthorServlet extends HttpServlet {
 		rd.forward(request, response);
 	}
 
-	private void removeAuthor(HttpServletRequest request) {
+	private void removeBranch(HttpServletRequest request) {
 		// TODO Auto-generated method stub
 		AdminService service = new AdminService();
 		try {
-			Integer authorId = Integer.parseInt((String)request.getParameter("authorId"));
-			service.removeAuthor(authorId);
-			request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Author successfully deleted. </div>");
+			Integer branchId = Integer.parseInt((String)request.getParameter("branchId"));
+			service.removeBranch(branchId);
+			request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Branch successfully deleted. </div>");
 		} catch (NumberFormatException e) {
 			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
@@ -102,33 +102,34 @@ public class AdminAuthorServlet extends HttpServlet {
 		}
 	}
 
-	private void editAuthor(HttpServletRequest request) {
-		Author author = new Author();
-		author.setAuthorId(Integer.parseInt(request.getParameter("authorId")));
-		author.setAuthorName(request.getParameter("authorName"));
+	private void editBranch(HttpServletRequest request) {
+		Branch g = new Branch();
+		g.setBranchNo(Integer.parseInt(request.getParameter("branchId")));
+		g.setBranchName(request.getParameter("branchName"));
+		g.setBranchAddress(request.getParameter("branchAddress"));
 
 		AdminService service = new AdminService();
 		try {
-			service.modAuthor(author);
+			service.modBranch(g);
 		} catch (SQLException e) {
 			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
-		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Author details successfully updated. </div>");
+		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Branch details successfully updated. </div>");
 	}
 
-	private void addAuthor(HttpServletRequest request) {
-		// TODO Auto-generated method stub
-		Author a = new Author();
-		a.setAuthorName(request.getParameter("authorName"));
+	private void addBranch(HttpServletRequest request) {
+		Branch g = new Branch();
+		g.setBranchName(request.getParameter("branchName"));
+		g.setBranchAddress(request.getParameter("branchAddress"));
 		AdminService service = new AdminService();
 		try {
-			service.addAuthor(a);
+			service.addBranch(g);
 		} catch (SQLException e) {
 			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
-		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Author successfully added. </div>");
+		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Branch successfully added. </div>");
 	}
 
 }

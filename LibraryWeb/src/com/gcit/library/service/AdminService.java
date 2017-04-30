@@ -6,10 +6,12 @@ import java.util.List;
 
 import com.gcit.library.dao.AuthorDAO;
 import com.gcit.library.dao.BookDAO;
+import com.gcit.library.dao.BranchDAO;
 import com.gcit.library.dao.GenreDAO;
 import com.gcit.library.dao.PublisherDAO;
 import com.gcit.library.entity.Author;
 import com.gcit.library.entity.Book;
+import com.gcit.library.entity.Branch;
 import com.gcit.library.entity.Genre;
 import com.gcit.library.entity.Publisher;
 
@@ -97,6 +99,23 @@ public class AdminService {
 		}
 	}
 	
+	public void addBranch(Branch b) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BranchDAO brdao = new BranchDAO(conn);
+			brdao.addBranch(b);
+			conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+	
 	public List<Author> getAllAuthors(Integer pageNo) throws SQLException{
 		Connection conn = null;
 		try {
@@ -151,6 +170,22 @@ public class AdminService {
 			conn = ConnectionUtil.getConnection();
 			PublisherDAO pdao = new PublisherDAO(conn);
 			return pdao.readAllPublishers(pageNo);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
+	public List<Branch> getAllBranches(Integer pageNo) throws SQLException{
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BranchDAO brdao = new BranchDAO(conn);
+			return brdao.readAllBranches(pageNo);
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		} finally{
@@ -227,6 +262,22 @@ public class AdminService {
 		return null;
 	}
 	
+	public Branch getBranchFromID(Integer id) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BranchDAO brdao = new BranchDAO(conn);
+			return brdao.readBranchByID(id);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
 	public Integer getBookCount() throws SQLException {
 		Connection conn = null;
 		try {
@@ -282,6 +333,22 @@ public class AdminService {
 			conn = ConnectionUtil.getConnection();
 			PublisherDAO pdao = new PublisherDAO(conn);
 			return pdao.getPublisherCount();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
+	public Integer getBranchCount() throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BranchDAO brdao = new BranchDAO(conn);
+			return brdao.readBranchCount();
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		} finally{
@@ -356,6 +423,23 @@ public class AdminService {
 		}
 	}
 	
+	public void removeBranch(Integer branchId) throws SQLException {
+		//System.out.println("call remove branch " + branchId);
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BranchDAO brdao = new BranchDAO(conn);
+			brdao.deleteBranch(branchId);
+			conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+	}
+	
 	public void modBook(Book book) throws SQLException {
 		Connection conn = null;
 		try {
@@ -395,7 +479,6 @@ public class AdminService {
 		try {
 			conn = ConnectionUtil.getConnection();
 			AuthorDAO adao = new AuthorDAO(conn);
-			//Integer bookId = bdao.addBookWithID(book);
 			adao.updateAuthor(author);
 			conn.commit();
 		} catch (ClassNotFoundException | SQLException e) {
@@ -413,7 +496,6 @@ public class AdminService {
 		try {
 			conn = ConnectionUtil.getConnection();
 			GenreDAO gdao = new GenreDAO(conn);
-			//Integer bookId = bdao.addBookWithID(book);
 			gdao.updateGenre(g);
 			conn.commit();
 		} catch (ClassNotFoundException | SQLException e) {
@@ -431,7 +513,6 @@ public class AdminService {
 		try {
 			conn = ConnectionUtil.getConnection();
 			PublisherDAO pdao = new PublisherDAO(conn);
-			//Integer bookId = bdao.addBookWithID(book);
 			pdao.updatePublisher(p);
 			conn.commit();
 		} catch (ClassNotFoundException | SQLException e) {
@@ -443,4 +524,25 @@ public class AdminService {
 			}
 		}
 	}
+	public void modBranch(Branch g) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BranchDAO brdao = new BranchDAO(conn);
+			brdao.updateBranch(g);
+			conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+
+
+
+
+	
 }

@@ -8,9 +8,9 @@ import java.util.List;
 
 import com.gcit.library.entity.Publisher;
 
-public class PublisherDAO extends BaseDAO {
+public class BorrowerDAO extends BaseDAO {
 
-	public PublisherDAO(Connection conn) {
+	public BorrowerDAO(Connection conn) {
 		super(conn);
 	}
 
