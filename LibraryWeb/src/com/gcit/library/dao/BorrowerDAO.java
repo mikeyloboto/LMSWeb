@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gcit.library.entity.Publisher;
+import com.gcit.library.entity.Borrower;
 
 public class BorrowerDAO extends BaseDAO {
 
@@ -14,79 +14,80 @@ public class BorrowerDAO extends BaseDAO {
 		super(conn);
 	}
 
-	public void addPublisher(Publisher publisher) throws ClassNotFoundException, SQLException {
-		save("insert into tbl_publisher (publisherName, publisherAddress, publisherPhone) values (?, ?, ?)",
-				new Object[] { publisher.getPublisherName(), publisher.getPublisherAddress(),
-						publisher.getPublisherPhone() });
+	public void addBorrower(Borrower borrower) throws ClassNotFoundException, SQLException {
+		save("insert into tbl_borrower (name, address, phone) values (?, ?, ?)",
+				new Object[] { borrower.getName(), borrower.getAddress(),
+						borrower.getPhone() });
 	}
 
-	public void updatePublisher(Publisher publisher) throws ClassNotFoundException, SQLException {
-		save("update tbl_publisher set publisherName = ?, publisherAddress = ?, publisherPhone = ? where publisherId = ?",
-				new Object[] { publisher.getPublisherName(), publisher.getPublisherAddress(),
-						publisher.getPublisherPhone(), publisher.getPublisherId() });
+	public void updateBorrower(Borrower borrower) throws ClassNotFoundException, SQLException {
+		save("update tbl_borrower set name = ?, address = ?, phone = ? where cardNo = ?",
+				new Object[] { borrower.getName(), borrower.getAddress(),
+						borrower.getPhone(), borrower.getCardNo() });
 	}
 
-	public void deletePublisher(Publisher publisher) throws ClassNotFoundException, SQLException {
-		save("delete from tbl_publisher where publisherId = ?", new Object[] { publisher.getPublisherId() });
+	public void deleteBorrower(Borrower borrower) throws ClassNotFoundException, SQLException {
+		save("delete from tbl_borrower where cardNo = ?", new Object[] { borrower.getCardNo() });
 	}
 
-	public void deletePublisher(Integer publisherId) throws ClassNotFoundException, SQLException {
-		save("delete from tbl_publisher where publisherId = ?", new Object[] { publisherId });
+	public void deleteBorrower(Integer borrowerId) throws ClassNotFoundException, SQLException {
+		save("delete from tbl_borrower where cardNo = ?", new Object[] { borrowerId });
 	}
 
-	public List<Publisher> readAllPublishers(Integer pageNo) throws ClassNotFoundException, SQLException {
+	public List<Borrower> readAllBorrowers(Integer pageNo) throws ClassNotFoundException, SQLException {
 		setPageNo(pageNo);
-		return read("select * from tbl_publisher", null);
+		return read("select * from tbl_borrower", null);
 	}
 
-	public Publisher readPublisherByID(Integer PublisherID) throws ClassNotFoundException, SQLException {
-		List<Publisher> publishers = read("select * from tbl_publisher where publisherId = ?",
-				new Object[] { PublisherID });
-		if (publishers != null && !publishers.isEmpty()) {
-			return publishers.get(0);
+	public Borrower readBorrowerByID(Integer borrowerID) throws ClassNotFoundException, SQLException {
+		List<Borrower> borrowers = read("select * from tbl_borrower where cardNo = ?",
+				new Object[] { borrowerID });
+		if (borrowers != null && !borrowers.isEmpty()) {
+			return borrowers.get(0);
 		}
 		return null;
 	}
 
-	public List<Publisher> readPublishersByName(String PublisherName) throws ClassNotFoundException, SQLException {
-		return read("select * from tbl_publisher where publisherName like ?", new Object[] { PublisherName });
+	public List<Borrower> readBorrowersByName(String borrowerName) throws ClassNotFoundException, SQLException {
+		return read("select * from tbl_borrower where name like ?", new Object[] { borrowerName });
 	}
 
 	@Override
 	public List extractData(ResultSet rs) throws SQLException, ClassNotFoundException {
 
-		List<Publisher> publishers = new ArrayList<>();
+		List<Borrower> borrowers = new ArrayList<>();
 		while (rs.next()) {
 			BookDAO bdao = new BookDAO(conn);
-			Publisher a = new Publisher();
-			a.setPublisherId(rs.getInt("publisherId"));
-			a.setPublisherName(rs.getString("publisherName"));
-			a.setPublisherAddress(rs.getString("publisherAddress"));
-			a.setPublisherPhone(rs.getString("publisherPhone"));
-			a.setBooks(
-					bdao.readFirstLevel("select * from tbl_book where pubId = ?", new Object[] { a.getPublisherId() }));
-			publishers.add(a);
+			Borrower a = new Borrower();
+			a.setCardNo(rs.getInt("cardNo"));
+			a.setName(rs.getString("name"));
+			a.setAddress(rs.getString("address"));
+			a.setPhone(rs.getString("phone"));
+			// TODO Fix that shite!!!!!!
+			a.setLoans(
+					bdao.readFirstLevel("select * from tbl_book where pubId = ?", new Object[] { a.getCardNo() }));
+			borrowers.add(a);
 		}
-		return publishers;
+		return borrowers;
 	}
 
 	@Override
 	public List extractDataFirstLevel(ResultSet rs) throws SQLException, ClassNotFoundException {
-		List<Publisher> publishers = new ArrayList<>();
+		List<Borrower> borrowers = new ArrayList<>();
 		while (rs.next()) {
 			BookDAO bdao = new BookDAO(conn);
-			Publisher a = new Publisher();
-			a.setPublisherId(rs.getInt("publisherId"));
-			a.setPublisherName(rs.getString("publisherName"));
-			a.setPublisherAddress(rs.getString("publisherAddress"));
-			a.setPublisherPhone(rs.getString("publisherPhone"));
-			publishers.add(a);
+			Borrower a = new Borrower();
+			a.setCardNo(rs.getInt("cardNo"));
+			a.setName(rs.getString("name"));
+			a.setAddress(rs.getString("address"));
+			a.setPhone(rs.getString("phone"));
+			borrowers.add(a);
 		}
-		return publishers;
+		return borrowers;
 	}
 
-	public Integer getPublisherCount() throws ClassNotFoundException, SQLException {
-		return readInt("select count(*) as COUNT from tbl_publisher", null);
+	public Integer getBorrowerCount() throws ClassNotFoundException, SQLException {
+		return readInt("select count(*) as COUNT from tbl_borrower", null);
 	}
 
 }
