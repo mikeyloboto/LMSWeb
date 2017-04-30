@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.gcit.library.entity.Book;
 import com.gcit.library.entity.Branch;
 import com.gcit.library.service.AdminService;
 import com.gcit.library.service.LibrarianService;
@@ -17,7 +18,7 @@ import com.gcit.library.service.LibrarianService;
 /**
  * Servlet implementation class AdminServlet
  */
-@WebServlet({ "/editBranchLibrarian" })
+@WebServlet({ "/editBranchLibrarian", "/updateStock", "/addBookStock"})
 public class LibrarianBranchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -63,11 +64,57 @@ public class LibrarianBranchServlet extends HttpServlet {
 		case "/editBranchLibrarian":
 			editBranch(request);
 			break;
+		case "/updateStock":
+			forwardPath = "/librarianStockManage.jsp";
+			editStock(request);
+			break;
+		case "/addBookStock":
+			forwardPath = "/librarianStockManage.jsp";
+			addStock(request);
+			break;
 		default:
 			break;
 		}
 		RequestDispatcher rd = request.getRequestDispatcher(forwardPath);
 		rd.forward(request, response);
+	}
+
+	private void editStock(HttpServletRequest request) {
+		Branch br = new Branch();
+		br.setBranchNo(Integer.parseInt(request.getParameter("branchId")));
+		Book book = new Book();
+		book.setBookId(Integer.parseInt(request.getParameter("bookId")));
+		Integer copies = Integer.parseInt(request.getParameter("noOfCopies"));
+		LibrarianService service = new LibrarianService();
+		try {
+			service.updateCopies(br, book, copies);
+		} catch (SQLException e) {
+			request.setAttribute("message",
+					"<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
+			e.printStackTrace();
+		}
+		request.setAttribute("message",
+				"<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Stock successfully updated. </div>");
+	
+	}
+	
+	private void addStock(HttpServletRequest request) {
+		Branch br = new Branch();
+		br.setBranchNo(Integer.parseInt(request.getParameter("branchId")));
+		Book book = new Book();
+		book.setBookId(Integer.parseInt(request.getParameter("bookId")));
+		Integer copies = Integer.parseInt(request.getParameter("noOfCopies"));
+		LibrarianService service = new LibrarianService();
+		try {
+			service.incrementCopies(br, book, copies);
+		} catch (SQLException e) {
+			request.setAttribute("message",
+					"<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
+			e.printStackTrace();
+		}
+		request.setAttribute("message",
+				"<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Book(s) successfully added to your branch. </div>");
+	
 	}
 
 	private void editBranch(HttpServletRequest request) {

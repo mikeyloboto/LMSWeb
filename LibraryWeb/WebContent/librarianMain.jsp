@@ -2,18 +2,19 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 <%@page import="com.gcit.library.entity.Branch"%>
-<%@page import="com.gcit.library.service.AdminService"%>
+<%@page import="com.gcit.library.service.LibrarianService"%>
 
 
 <%
-	AdminService service = new AdminService();
+	LibrarianService service = new LibrarianService();
 	Branch activeBranch = service.getBranchFromID(Integer.parseInt(request.getParameter("branchId")));
 %>
 
 ${message}
 <ol class="breadcrumb">
 	<li><a href="index.jsp">Home</a></li>
-	<li class="active">Librarian</li>
+	<li><a href="librarian.jsp">Librarian Login</a></li>
+	<li class="active"><%=activeBranch.getBranchName()%> Management</li>
 </ol>
 <div class="jumbotron">
 	<div class="container">
@@ -66,7 +67,7 @@ ${message}
 						<input type="hidden" name="branchId"
 							value="<%=activeBranch.getBranchNo()%>">
 						<p>
-							<button type="submit" class="btn btn-deefault">Go to Stock Management</button>
+							<button type="submit" class="btn btn-primary">Go to Stock Management</button>
 						</p>
 
 					</form>

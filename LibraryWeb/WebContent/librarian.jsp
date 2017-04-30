@@ -2,17 +2,17 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 <%@page import="com.gcit.library.entity.Branch"%>
-<%@page import="com.gcit.library.service.AdminService"%>
+<%@page import="com.gcit.library.service.LibrarianService"%>
 
 
 <%
-	AdminService service = new AdminService();
+	LibrarianService service = new LibrarianService();
 	List<Branch> branches = service.getAllBranches(null);
 %>
 
 <ol class="breadcrumb">
 	<li><a href="index.jsp">Home</a></li>
-	<li class="active">Librarian</li>
+	<li class="active">Librarian Login</li>
 </ol>
 <div class="jumbotron">
 	<div class="container">
@@ -41,7 +41,7 @@
 							</select>
 						</p>
 						<p>
-							<button type="submit" class="btn btn-primary">Sign In</button>
+							<button type="submit" class="btn btn-success">Sign In</button>
 						</p>
 					</form>
 				</div>

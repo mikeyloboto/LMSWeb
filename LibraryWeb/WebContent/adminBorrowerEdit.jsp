@@ -6,7 +6,7 @@
 <%
 	AdminService service = new AdminService();
 	Borrower borrower = service.getBorrowerFromID(Integer.parseInt(request.getParameter("borrowerId"))); 
-	System.out.println("Init edit");
+	//System.out.println("Init edit");
 	//System.out.println("New Modal Init");
 %>
 <div>

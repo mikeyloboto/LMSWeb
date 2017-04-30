@@ -6,7 +6,7 @@
 <%
 	AdminService service = new AdminService();
 	Publisher publisher = service.getPublisherFromID(Integer.parseInt(request.getParameter("publisherId"))); 
-	System.out.println("Init edit");
+	//System.out.println("Init edit");
 	//System.out.println("New Modal Init");
 %>
 <div>

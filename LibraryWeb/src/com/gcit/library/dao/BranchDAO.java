@@ -49,7 +49,7 @@ public class BranchDAO extends BaseDAO {
 			b.setBranchNo(rs.getInt("branchId"));
 			b.setBranchName(rs.getString("branchName"));
 			b.setBranchAddress(rs.getString("branchAddress"));
-			b.setStock(bdao.readCopiesFirstLevel(b));
+			b.setStock(bdao.readCopiesFirstLevel(b, null));
 			branches.add(b);
 		}
 		return branches;
