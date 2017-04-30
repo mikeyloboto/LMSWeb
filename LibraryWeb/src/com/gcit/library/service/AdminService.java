@@ -63,6 +63,23 @@ public class AdminService {
 		}
 	}
 	
+	public void addGenre(Genre g) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			GenreDAO gdao = new GenreDAO(conn);
+			gdao.addGenre(g);
+			conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+	
 	public List<Author> getAllAuthors(Integer pageNo) throws SQLException{
 		Connection conn = null;
 		try {
@@ -145,6 +162,38 @@ public class AdminService {
 		return null;
 	}
 	
+	public Author getAuthorFromID(Integer id) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			AuthorDAO adao = new AuthorDAO(conn);
+			return adao.readAuthorByID(id);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
+	public Genre getGenreFromID(Integer id) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			GenreDAO gdao = new GenreDAO(conn);
+			return gdao.readGenreByID(id);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
 	public Integer getBookCount() throws SQLException {
 		Connection conn = null;
 		try {
@@ -160,7 +209,39 @@ public class AdminService {
 		}
 		return null;
 	}
+	
+	public Integer getAuthorCount() throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			AuthorDAO adao = new AuthorDAO(conn);
+			return adao.readAuthorCount();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+		return null;
+	}
 
+	
+	public Integer getGenreCount() throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			GenreDAO gdao = new GenreDAO(conn);
+			return gdao.readGenreCount();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+		return null;
+	}
 	public void removeBook(Integer bookId) throws SQLException {
 		Connection conn = null;
 		try {
@@ -176,7 +257,38 @@ public class AdminService {
 			}
 		}
 	}
-
+	public void removeAuthor(Integer authorId) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			AuthorDAO adao = new AuthorDAO(conn);
+			adao.deleteAuthor(authorId);
+			conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+	}
+	
+	public void removeGenre(Integer genreId) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			GenreDAO gdao = new GenreDAO(conn);
+			gdao.deleteGenre(genreId);
+			conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally{
+			if(conn!=null){
+				conn.close();
+			}
+		}
+	}
+	
 	public void modBook(Book book) throws SQLException {
 		Connection conn = null;
 		try {
@@ -200,6 +312,42 @@ public class AdminService {
 				}
 			}
 			// repeat for Publisher
+			conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+	
+	public void modAuthor(Author author) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			AuthorDAO adao = new AuthorDAO(conn);
+			//Integer bookId = bdao.addBookWithID(book);
+			adao.updateAuthor(author);
+			conn.commit();
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			conn.rollback();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
+
+	public void modGenre(Genre g) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			GenreDAO gdao = new GenreDAO(conn);
+			//Integer bookId = bdao.addBookWithID(book);
+			gdao.updateGenre(g);
 			conn.commit();
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();

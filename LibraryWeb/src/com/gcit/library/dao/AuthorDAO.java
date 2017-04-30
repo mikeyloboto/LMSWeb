@@ -27,6 +27,10 @@ public class AuthorDAO extends BaseDAO{
 		save("delete from tbl_author where authorId = ?", new Object[] {author.getAuthorId()});
 	}
 	
+	public void deleteAuthor(Integer authorId) throws ClassNotFoundException, SQLException {
+		save("delete from tbl_author where authorId = ?", new Object[] {authorId});
+	}
+	
 	public List<Author> readAllAuthors(Integer pageNo) throws ClassNotFoundException, SQLException{
 		setPageNo(pageNo);
 		return read("select * from tbl_author", null);
@@ -69,4 +73,10 @@ public class AuthorDAO extends BaseDAO{
 		}
 		return authors;
 	}
+
+	public Integer readAuthorCount() throws ClassNotFoundException, SQLException {
+		return readInt("select count(*) as COUNT from tbl_author", null);
+	}
+
+	
 }

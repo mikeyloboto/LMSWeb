@@ -1,4 +1,4 @@
-<%@page import="java.util.List" %>
+<%@page import="java.util.List"%>
 <%@page import="com.gcit.library.entity.Author"%>
 <%@page import="com.gcit.library.entity.Book"%>
 <%@page import="com.gcit.library.entity.Genre"%>
@@ -19,38 +19,53 @@
 			aria-label="Close">
 			<span aria-hidden="true">&times;</span>
 		</button>
-		<h4 class="modal-title">Edit <%=book.getTitle() %></h4>
+		<h4 class="modal-title">
+			Edit
+			<%=book.getTitle()%></h4>
 	</div>
 	<form action="editBook" method="post">
 		<div class="modal-body">
-		
+
 			<p>Enter the updated title of Book:</p>
-			<input class="form-control" type="text" name="bookName" required="required" value="<%=book.getTitle()%>"> <br />
+			<input class="form-control" type="text" name="bookName"
+				required="required" value="<%=book.getTitle()%>"> <br />
 			<!-- Put shite here -->
 			<input type="hidden" name="bookId" value="<%=book.getBookId()%>">
 			<p>Select Author(s):</p>
 			<select multiple class="form-control" name="authors">
-			<%for (Author a : authors) {%>
+				<%
+					for (Author a : authors) {
+				%>
 				<option value="<%=a.getAuthorId()%>"><%=a.getAuthorName()%></option>
-				<%} %>
+				<%
+					}
+				%>
 			</select> <br />
-				<p>Select Genre(s):</p>
+			<p>Select Genre(s):</p>
 			<select multiple class="form-control" name="genres">
-			<%for (Genre g : genres) {%>
+				<%
+					for (Genre g : genres) {
+				%>
 				<option value="<%=g.getGenreId()%>"><%=g.getGenreName()%></option>
-				<%} %>
+				<%
+					}
+				%>
 			</select> <br />
-				<p>Select Publisher:</p>
+			<p>Select Publisher:</p>
 			<select class="form-control" name="publisher">
-			<%for (Publisher p : publishers) {%>
+				<%
+					for (Publisher p : publishers) {
+				%>
 				<option value="<%=p.getPublisherId()%>"><%=p.getPublisherName()%></option>
-				<%} %>
-			</select> <br />
-			<br>
+				<%
+					}
+				%>
+			</select> <br /> <br>
 			<div class="alert alert-info" role="alert">
-			<strong>Hint,</strong> you can use "Ctrl" button to select multiple authors and genres.
+				<strong>Hint,</strong> you can use "Ctrl" button to select multiple
+				authors and genres.
 			</div>
-			
+
 
 		</div>
 		<div class="modal-footer">

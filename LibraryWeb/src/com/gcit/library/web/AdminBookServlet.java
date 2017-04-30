@@ -99,7 +99,6 @@ public class AdminBookServlet extends HttpServlet {
 		AdminService service = new AdminService();
 		try {
 			Integer bookId = Integer.parseInt((String)request.getParameter("bookId"));
-			System.out.println("removing " + bookId);
 			service.removeBook(bookId);
 			request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Book successfully deleted. </div>");
 		} catch (NumberFormatException e) {
