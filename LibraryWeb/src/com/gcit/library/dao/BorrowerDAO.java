@@ -48,10 +48,16 @@ public class BorrowerDAO extends BaseDAO {
 		return null;
 	}
 
-	public List<Borrower> readBorrowersByName(String borrowerName) throws ClassNotFoundException, SQLException {
+	public List<Borrower> readBorrowersByName(String borrowerName, Integer pageNo) throws ClassNotFoundException, SQLException {
+		setPageNo(pageNo);
 		return read("select * from tbl_borrower where name like ?", new Object[] { borrowerName });
 	}
 
+	public Integer readBorrowersCountByName(String string) throws ClassNotFoundException, SQLException {
+		return readInt("select count(*) from tbl_borrower where name like ?", new Object[] { string });
+	}
+
+	
 	@Override
 	public List extractData(ResultSet rs) throws SQLException, ClassNotFoundException {
 
@@ -89,5 +95,6 @@ public class BorrowerDAO extends BaseDAO {
 	public Integer getBorrowerCount() throws ClassNotFoundException, SQLException {
 		return readInt("select count(*) as COUNT from tbl_borrower", null);
 	}
+
 
 }

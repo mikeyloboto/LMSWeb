@@ -427,6 +427,38 @@ public class AdminService {
 		return null;
 	}
 
+	public List<Branch> getBranchesFromName(Integer pageNo, String searchString) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BranchDAO bdao = new BranchDAO(conn);
+			return bdao.readBranchesByName("%" + searchString + "%", pageNo);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
+	public List<Borrower> getBorrowersFromName(Integer pageNo, String searchString) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BorrowerDAO bdao = new BorrowerDAO(conn);
+			return bdao.readBorrowersByName("%" + searchString + "%", pageNo);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
 	public Loan expandLoan(Loan loan) throws SQLException {
 		Connection conn = null;
 		try {
@@ -618,7 +650,38 @@ public class AdminService {
 		}
 		return null;
 	}
-
+	
+	public Integer getBranchesFromNameCount(String searchString) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BranchDAO bdao = new BranchDAO(conn);
+			return bdao.readBranchesCountByName("%" + searchString + "%");
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
+	public Integer getBorrowersFromNameCount(String searchString) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BorrowerDAO bdao = new BorrowerDAO(conn);
+			return bdao.readBorrowersCountByName("%" + searchString + "%");
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
 
 	public void removeBook(Integer bookId) throws SQLException {
 		Connection conn = null;
@@ -852,6 +915,9 @@ public class AdminService {
 			}
 		}
 	}
+
+
+
 
 
 

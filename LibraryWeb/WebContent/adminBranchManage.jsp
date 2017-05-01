@@ -23,6 +23,31 @@
 	}
 %>
 ${message}
+<script>
+	function searchBranch(page) {
+
+		$.ajax({
+			url : "searchBranches",
+			data : {
+				searchString : $('#searchString').val(),
+				pageNo : page
+			}
+		}).done(function(data) {
+			//alert(data);
+			var arr_data = String(data).split("\n");
+			$('#tableBranch').html(arr_data[0]);
+			$('#pagination').html(arr_data[1]);
+
+		})
+	}
+</script>
+<script>
+	function setPageNo(p) {
+		//var but = document.getElementById('#pageNo')
+		//but.value = p;
+		searchBranch(p);
+	}
+</script>
 <ol class="breadcrumb">
 	<li><a href="index.jsp">Home</a></li>
 	<li><a href="admin.jsp">Administrator</a></li>
@@ -36,20 +61,13 @@ ${message}
 		<div class="page-header">
 			<h1>List of Existing Branches in LMS</h1>
 		</div>
+		<form action="searchBrances">
+			<input type="text" class="form-control" name="searchString"
+				id="searchString" placeholder="Search" oninput="searchBranch(1)">
+		</form>
 		<nav aria-label="Page navigation">
-			<ul class="pagination">
-				<li><a href="#" aria-label="Previous"> <span
-						aria-hidden="true">&laquo;</span>
-				</a></li>
-				<%
-					for (int i = 1; i <= numOfPages; i++) {
-				%>
-				<li><a href="adminBranchManage.jsp?pageNo=<%=i%>"><%=i%></a></li>
-				<%
-					}
-				%>
-				<li><a href="#" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-				</a></li>
+			<ul class="pagination" id="pagination">
+
 			</ul>
 		</nav>
 		<table class="table table-striped">
@@ -62,34 +80,8 @@ ${message}
 					<!-- <th>Delete</th> -->
 				</tr>
 			</thead>
-			<tbody>
-				<%
-					for (Branch p : branches) {
-						Integer mod = 1;
-						if (request.getParameter("pageNo") != null) {
-							mod = Integer.parseInt(request.getParameter("pageNo"));
-						}
-						Integer pageNo = 1;
-						if (request.getParameter("pageNo") != null) {
-							pageNo = Integer.parseInt(request.getParameter("pageNo"));
-						}
-				%>
-				<tr>
-					<%
-						Integer id = branches.indexOf(p) + 1 + ((mod - 1) * 10);
-					%>
-					<td><%=id%></td>
-					<td><%=p.getBranchName()%></td>
-					<td><%=p.getBranchAddress()%></td>
-					<td><button type="button" class="btn btn-primary"
-							data-toggle="modal" data-target="#editBranchModal"
-							href="adminBranchEdit.jsp?branchId=<%=p.getBranchNo()%>&pageNo=<%=pageNo%>">Update</button>
-						<a type="button" class="btn btn-danger"
-						href="removeBranch?branchId=<%=p.getBranchNo()%>">Delete</a></td>
-				</tr>
-				<%
-					}
-				%>
+			<tbody id="tableBranch">
+
 			</tbody>
 		</table>
 	</div>
@@ -114,5 +106,10 @@ ${message}
 			$(this).removeData();
 		});
 
+	});
+</script>
+<script>
+	$(document).ready(function() {
+		searchBranch(1);
 	});
 </script>

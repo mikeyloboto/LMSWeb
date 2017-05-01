@@ -70,6 +70,15 @@ public class BranchDAO extends BaseDAO {
 		return read("select * from tbl_library_branch", null);
 	}
 
+	public List<Branch> readBranchesByName(String string, Integer pageNo) throws ClassNotFoundException, SQLException {
+		setPageNo(pageNo);
+		return read("select * from tbl_library_branch where branchName like ?", new Object[]{string});
+	}
+
+	public Integer readBranchesCountByName(String string) throws ClassNotFoundException, SQLException {
+		return readInt("select count(*) from tbl_library_branch where branchName like ?", new Object[]{string});
+	}
+	
 	public Branch readBranchByID(Integer id) throws ClassNotFoundException, SQLException {
 		List<Branch> branches = read("select * from tbl_library_branch where branchId = ?", new Object[] { id });
 		if (branches != null && !branches.isEmpty()) {
@@ -77,5 +86,7 @@ public class BranchDAO extends BaseDAO {
 		}
 		return null;
 	}
+
+
 
 }
