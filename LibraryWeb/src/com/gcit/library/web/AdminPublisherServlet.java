@@ -2,6 +2,7 @@ package com.gcit.library.web;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -41,12 +42,16 @@ public class AdminPublisherServlet extends HttpServlet {
 		switch (reqUrl) {
 
 		case "/pagePublishers":
-			//pageAuthors(request);
+			// pageAuthors(request);
 			forwardPath = "/adminPublisherManage.jsp";
 			break;
 		case "/searchPublishers":
-			//String data = searchAuthors(request);
-		//	response.getWriter().write(data);
+			// System.out.println("test");
+			String table = searchPublishers(request);
+			String pagination = pagePublishers(request);
+			// response.setContentType("application/json");
+			// response.setCharacterEncoding("UTF-8");
+			response.getWriter().write(table + '\n' + pagination);
 			// forwardPath = "/viewauthors.jsp";
 			isAjax = Boolean.TRUE;
 			break;
@@ -60,6 +65,78 @@ public class AdminPublisherServlet extends HttpServlet {
 			RequestDispatcher rd = request.getRequestDispatcher(forwardPath);
 			rd.forward(request, response);
 		}
+	}
+
+	private String pagePublishers(HttpServletRequest request) {
+		String searchString = request.getParameter("searchString");
+		// System.out.println(searchString);
+		AdminService service = new AdminService();
+		StringBuffer strBuf = new StringBuffer();
+		try {
+			// request.setAttribute("authors", service.getAuthorsByName(1,
+			// searchString));
+			Integer count = service.getPublishersFromNameCount(searchString);
+			Integer pages = 1;
+			if (count != 0) {
+				if (count % 10 == 0) {
+					pages = count / 10;
+				} else {
+					pages = count / 10 + 1;
+				}
+			}
+			// strBuf.append("<thead><tr><th>#</th><th>Author
+			// Name</th><th>Edit</th><th>Delete</th></tr></thead><tbody>");
+			strBuf.append(
+					"<li><a href=\"#\" aria-label=\"Previous\"> <span	aria-hidden=\"true\">&laquo;</span></a></li>");
+			for (int i = 1; i <= pages; i++) {
+
+				strBuf.append("<li><a href=\"#\" onclick=\"searchPublisher(" + i + ")\">" + i + "</a></li>");
+			}
+
+			strBuf.append("<li><a href=\"#\" aria-label=\"Next\"> <span aria-hidden=\"true\">&raquo;</span></a></li>");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return strBuf.toString();
+	}
+
+	private String searchPublishers(HttpServletRequest request) {
+		String pageNoPar = request.getParameter("pageNo");
+		System.out.println(pageNoPar);
+		Integer pageNo;
+		if (pageNoPar == null)
+			pageNo = 1;
+		else
+			pageNo = Integer.parseInt(pageNoPar);
+		String searchString = request.getParameter("searchString");
+		// System.out.println(searchString);
+		AdminService service = new AdminService();
+		StringBuffer strBuf = new StringBuffer();
+		try {
+			// request.setAttribute("authors", service.getAuthorsByName(1,
+			// searchString));
+			List<Publisher> pubs = service.getPublishersFromName(pageNo, searchString);
+			System.out.println(pubs.size());
+			// strBuf.append("<thead><tr><th>#</th><th>Author
+			// Name</th><th>Edit</th><th>Delete</th></tr></thead><tbody>");
+			for (Publisher a : pubs) {
+				strBuf.append("<tr><td>" + (pubs.indexOf(a) + 1 + (pageNo - 1) * 10) + "</td><td>"
+						+ a.getPublisherName() + "</td>");
+				strBuf.append("<td>" + a.getPublisherAddress() + "</td><td>" + a.getPublisherPhone() + "</td>");
+
+				strBuf.append("<td><button type=\"button\" class=\"btn btn-primary\""
+						+ " data-toggle=\"modal\" data-target=\"#editPublisherModal\""
+						+ " href=\"adminPublisherEdit.jsp?publisherId=" + a.getPublisherId() + "&pageNo=" + pageNo
+						+ "\">Update</button> ");
+				strBuf.append("<a type=\"button\" class=\"btn btn-danger\"" + " href=\"removePublisher?publisherId="
+						+ a.getPublisherId() + "\">Delete</a></td></tr>");
+			}
+			// strBuf.append("</tbody>");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return strBuf.toString();
 	}
 
 	/**
@@ -90,14 +167,17 @@ public class AdminPublisherServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		AdminService service = new AdminService();
 		try {
-			Integer publisherId = Integer.parseInt((String)request.getParameter("publisherId"));
+			Integer publisherId = Integer.parseInt((String) request.getParameter("publisherId"));
 			service.removePublisher(publisherId);
-			request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Publisher successfully deleted. </div>");
+			request.setAttribute("message",
+					"<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Publisher successfully deleted. </div>");
 		} catch (NumberFormatException e) {
-			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
+			request.setAttribute("message",
+					"<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		} catch (SQLException e) {
-			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
+			request.setAttribute("message",
+					"<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
 	}
@@ -113,10 +193,12 @@ public class AdminPublisherServlet extends HttpServlet {
 		try {
 			service.modPublisher(g);
 		} catch (SQLException e) {
-			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
+			request.setAttribute("message",
+					"<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
-		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Publisher details successfully updated. </div>");
+		request.setAttribute("message",
+				"<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Publisher details successfully updated. </div>");
 	}
 
 	private void addPublisher(HttpServletRequest request) {
@@ -128,10 +210,12 @@ public class AdminPublisherServlet extends HttpServlet {
 		try {
 			service.addPublisher(g);
 		} catch (SQLException e) {
-			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
+			request.setAttribute("message",
+					"<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
-		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Publisher successfully added. </div>");
+		request.setAttribute("message",
+				"<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Publisher successfully added. </div>");
 	}
 
 }

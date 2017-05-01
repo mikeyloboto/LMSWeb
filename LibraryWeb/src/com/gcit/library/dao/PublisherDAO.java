@@ -48,7 +48,8 @@ public class PublisherDAO extends BaseDAO {
 		return null;
 	}
 
-	public List<Publisher> readPublishersByName(String PublisherName) throws ClassNotFoundException, SQLException {
+	public List<Publisher> readPublishersByName(String PublisherName, Integer pageNo) throws ClassNotFoundException, SQLException {
+		setPageNo(pageNo);
 		return read("select * from tbl_publisher where publisherName like ?", new Object[] { PublisherName });
 	}
 
@@ -87,6 +88,10 @@ public class PublisherDAO extends BaseDAO {
 
 	public Integer getPublisherCount() throws ClassNotFoundException, SQLException {
 		return readInt("select count(*) as COUNT from tbl_publisher", null);
+	}
+
+	public Integer readPublishersCountByName(String publisherName) throws ClassNotFoundException, SQLException {
+		return readInt("select count(*) from tbl_publisher where publisherName like ?", new Object[] { publisherName });
 	}
 
 }

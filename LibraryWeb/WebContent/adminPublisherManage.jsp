@@ -23,6 +23,32 @@
 	}
 %>
 ${message}
+<script>
+	function searchPublisher(page) {
+
+		$.ajax({
+			url : "searchPublishers",
+			data : {
+				searchString : $('#searchString').val(),
+				pageNo : page
+			}
+		}).done(function(data) {
+			//alert(data);
+			var arr_data = String(data).split("\n");
+			$('#tablePublisher').html(arr_data[0]);
+			$('#pagination').html(arr_data[1]);
+			
+		})
+	}
+</script>
+<script>
+	function setPageNo(p) {
+		//var but = document.getElementById('#pageNo')
+		//but.value = p;
+		searchPublisher(p);
+	}
+</script>
+<input type="hidden" name="pageNo" id="pageNo" value="1">
 <ol class="breadcrumb">
 	<li><a href="index.jsp">Home</a></li>
 	<li><a href="admin.jsp">Administrator</a></li>
@@ -36,20 +62,13 @@ ${message}
 		<div class="page-header">
 			<h1>List of Existing Publishers in LMS</h1>
 		</div>
+		<form action="searchPublishers">
+			<input type="text" class="form-control" name="searchString"
+				id="searchString" placeholder="Search" oninput="searchPublisher(1)">
+		</form>
 		<nav aria-label="Page navigation">
-			<ul class="pagination">
-				<li><a href="#" aria-label="Previous"> <span
-						aria-hidden="true">&laquo;</span>
-				</a></li>
-				<%
-					for (int i = 1; i <= numOfPages; i++) {
-				%>
-				<li><a href="adminPublisherManage.jsp?pageNo=<%=i%>"><%=i%></a></li>
-				<%
-					}
-				%>
-				<li><a href="#" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-				</a></li>
+			<ul class="pagination" id="pagination">
+			
 			</ul>
 		</nav>
 		<table class="table table-striped">
@@ -63,35 +82,8 @@ ${message}
 					<!-- <th>Delete</th> -->
 				</tr>
 			</thead>
-			<tbody>
-				<%
-					for (Publisher p : publishers) {
-						Integer mod = 1;
-						if (request.getParameter("pageNo") != null) {
-							mod = Integer.parseInt(request.getParameter("pageNo"));
-						}
-						Integer pageNo = 1;
-						if (request.getParameter("pageNo") != null) {
-							pageNo = Integer.parseInt(request.getParameter("pageNo"));
-						}
-				%>
-				<tr>
-					<%
-						Integer id = publishers.indexOf(p) + 1 + ((mod - 1) * 10);
-					%>
-					<td><%=id%></td>
-					<td><%=p.getPublisherName()%></td>
-					<td><%=p.getPublisherAddress()%></td>
-					<td><%=p.getPublisherPhone()%></td>
-					<td><button type="button" class="btn btn-primary"
-							data-toggle="modal" data-target="#editPublisherModal"
-							href="adminPublisherEdit.jsp?publisherId=<%=p.getPublisherId()%>&pageNo=<%=pageNo%>">Update</button>
-						<a type="button" class="btn btn-danger"
-						href="removePublisher?publisherId=<%=p.getPublisherId()%>">Delete</a></td>
-				</tr>
-				<%
-					}
-				%>
+			<tbody id="tablePublisher">
+
 			</tbody>
 		</table>
 	</div>
@@ -116,5 +108,10 @@ ${message}
 			$(this).removeData();
 		});
 
+	});
+</script>
+<script>
+	$(document).ready ( function(){
+		searchPublisher(1);
 	});
 </script>

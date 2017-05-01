@@ -361,6 +361,22 @@ public class AdminService {
 		}
 		return null;
 	}
+	
+	public List<Publisher> getPublishersFromName(int i, String searchString) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			PublisherDAO pdao = new PublisherDAO(conn);
+			return pdao.readPublishersByName("%" + searchString + "%", i);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
 
 	public Loan expandLoan(Loan loan) throws SQLException {
 		Connection conn = null;
@@ -489,6 +505,24 @@ public class AdminService {
 		}
 		return null;
 	}
+	
+
+	public Integer getPublishersFromNameCount(String searchString) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			PublisherDAO pdao = new PublisherDAO(conn);
+			return pdao.readPublishersCountByName("%" + searchString + "%");
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+
 
 	public void removeBook(Integer bookId) throws SQLException {
 		Connection conn = null;
@@ -722,5 +756,7 @@ public class AdminService {
 			}
 		}
 	}
+
+
 
 }
