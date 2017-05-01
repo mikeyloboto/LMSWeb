@@ -127,7 +127,7 @@ public class AdminBorrowerServlet extends HttpServlet {
 
 	private String searchBorrowers(HttpServletRequest request) {
 		String pageNoPar = request.getParameter("pageNo");
-		System.out.println(pageNoPar);
+		//System.out.println(pageNoPar);
 		Integer pageNo;
 		if (pageNoPar == null)
 			pageNo = 1;

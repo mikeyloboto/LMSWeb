@@ -106,7 +106,7 @@ public class AdminBookServlet extends HttpServlet {
 
 	private String searchBooks(HttpServletRequest request) {
 		String pageNoPar = request.getParameter("pageNo");
-		System.out.println(pageNoPar);
+		//System.out.println(pageNoPar);
 		Integer pageNo;
 		if (pageNoPar == null)
 			pageNo = 1;
