@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gcit.library.entity.Borrower;
 import com.gcit.library.entity.Loan;
 
 public class LoanDAO extends BaseDAO {
@@ -38,6 +39,12 @@ public class LoanDAO extends BaseDAO {
 						loan.getBook().getBookId(), loan.getBranch().getBranchNo(), loan.getBorrower().getCardNo(),
 						Timestamp.valueOf(loan.getDateOut()) });
 	}
+	
+	public void closeLoan(Loan loan) throws ClassNotFoundException, SQLException {
+		save("update tbl_book_loans set dateIn = CURDATE() where bookId = ? and branchId = ? and cardNo = ? and dateOut = ?",
+				new Object[] {loan.getBook().getBookId(), loan.getBranch().getBranchNo(), loan.getBorrower().getCardNo(),
+						Timestamp.valueOf(loan.getDateOut()) });
+	}
 
 	public void deleteLoan(Loan loan) throws ClassNotFoundException, SQLException {
 		save("delete from tbl_book_loans where bookId = ? and branchNo = ? and cardNo = ? and dateOut = ?",
@@ -52,7 +59,7 @@ public class LoanDAO extends BaseDAO {
 
 	public List<Loan> readLoansByCardNo(Integer cardNo, Integer pageNo) throws ClassNotFoundException, SQLException {
 		setPageNo(pageNo);
-		return read("select * from tbl_book_loans where cardNo = ?", new Object[] { cardNo });
+		return read("select * from tbl_book_loans where cardNo = ? and dateIn is null", new Object[] { cardNo });
 	}
 
 	@Override
@@ -100,6 +107,10 @@ public class LoanDAO extends BaseDAO {
 
 	public Integer getLoanCount() throws ClassNotFoundException, SQLException {
 		return readInt("select count(*) as COUNT from tbl_book_loans where dateIn IS NULL", null);
+	}
+	
+	public Integer getLoanCountByID(Borrower borrower) throws ClassNotFoundException, SQLException {
+		return readInt("select count(*) as COUNT from tbl_book_loans where dateIn IS NULL and cardNo = ?", new Object[]{borrower.getCardNo()});
 	}
 
 	public Loan expandLoan(Loan loan) throws ClassNotFoundException, SQLException {

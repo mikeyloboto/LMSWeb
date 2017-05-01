@@ -97,6 +97,19 @@ public class BookDAO extends BaseDAO {
 		return map;
 	}
 	
+	public Map<Book, Integer> readCopiesFirstLevelNotZero(Branch branch, Integer pageNo) throws ClassNotFoundException, SQLException {
+		setPageNo(pageNo);
+		Map<Book, Integer> map = new HashMap<>();
+		List<Book> books = read(
+				"select * from tbl_book where bookId in (select bookId from tbl_book_copies where branchId = ? and noOfCopies > 0)",
+				new Object[] { branch.getBranchNo() });
+		for (Book b : books) {
+			Integer c = getBookCopies(b, branch);
+			map.put(b, c);
+		}
+		return map;
+	}
+	
 	public Boolean modCopies(Branch branch, Book book, Integer copies) throws ClassNotFoundException, SQLException {
 		Integer bookExistence = readInt(
 				"select count(*) from tbl_book_copies where branchId = ? and bookId = ?",

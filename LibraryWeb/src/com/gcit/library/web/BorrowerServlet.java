@@ -2,6 +2,8 @@ package com.gcit.library.web;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.gcit.library.entity.Book;
 import com.gcit.library.entity.Borrower;
 import com.gcit.library.entity.Branch;
+import com.gcit.library.entity.Loan;
 import com.gcit.library.service.AdminService;
 import com.gcit.library.service.BorrowerService;
 import com.gcit.library.service.LibrarianService;
@@ -40,9 +43,14 @@ public class BorrowerServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String reqUrl = request.getRequestURI().substring(request.getContextPath().length(),
 				request.getRequestURI().length());
-		String forwardPath = "/librarianMain.jsp";
+		String forwardPath = "/borrowerMain.jsp";
 		Boolean isAjax = Boolean.FALSE;
 		switch (reqUrl) {
+		case "/returnBook":
+			forwardPath = "/borrowerMain.jsp?branchId=" + request.getParameter("retBranchNo");
+			//System.out.println("get");
+			returnBook(request);
+			break;
 		default:
 			break;
 		}
@@ -60,18 +68,16 @@ public class BorrowerServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String reqUrl = request.getRequestURI().substring(request.getContextPath().length(),
 				request.getRequestURI().length());
-		String forwardPath = "/librarianMain.jsp";
+		String forwardPath = "/borrowerMain.jsp";
 		switch (reqUrl) {
 
 		
 		// TODO edit all that bootleg shite here
 		case "/borrowBook":
-		//	borrowBook(request);
+			forwardPath = "/borrowerMain.jsp?branchId=" + request.getParameter("branchNo");
+			borrowBook(request);
 			break;
-		case "/returnBook":
-			forwardPath = "/librarianStockManage.jsp";
-			editStock(request);
-			break;
+		
 		case "/authenticateBorrower":
 			if (authenticate(request)) {
 				forwardPath = "/borrowerMain.jsp";
@@ -85,6 +91,36 @@ public class BorrowerServlet extends HttpServlet {
 		}
 		RequestDispatcher rd = request.getRequestDispatcher(forwardPath);
 		rd.forward(request, response);
+	}
+
+	private void returnBook(HttpServletRequest request) {
+		Loan loan = new Loan();
+		Book book = new Book();
+		//System.out.println(request.getParameter("bookId"));
+		book.setBookId(Integer.parseInt(request.getParameter("bookId")));
+		loan.setBook(book);
+		Borrower borrower = new Borrower();
+		//System.out.println(request.getParameter("cardNo"));
+		borrower.setCardNo(Integer.parseInt(request.getParameter("cardNo")));
+		loan.setBorrower(borrower);
+		Branch branch = new Branch();
+		//System.out.println(request.getParameter("branchNo"));
+		branch.setBranchNo(Integer.parseInt(request.getParameter("branchNo")));
+		loan.setBranch(branch);
+		//System.out.println(request.getParameter("dateOut"));
+		LocalDateTime dateOut = LocalDateTime.parse(request.getParameter("dateOut"));
+		loan.setDateOut(dateOut);
+		System.out.println(request.getParameter("retBranchNo"));
+		Integer retBranch = Integer.parseInt(request.getParameter("retBranchNo"));
+		BorrowerService service = new BorrowerService();
+		try {
+			service.closeLoan(retBranch, loan);
+			request.setAttribute("authCardNo", request.getParameter("cardNo"));
+		} catch (SQLException e) {
+			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
+			e.printStackTrace();
+		}
+		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Loan successfully closed. </div>");
 	}
 
 	private boolean authenticate(HttpServletRequest request) {
@@ -110,59 +146,25 @@ public class BorrowerServlet extends HttpServlet {
 		return false;
 	}
 
-	private void editStock(HttpServletRequest request) {
-		Branch br = new Branch();
-		br.setBranchNo(Integer.parseInt(request.getParameter("branchId")));
+	private void borrowBook(HttpServletRequest request) {
+		Loan loan = new Loan();
 		Book book = new Book();
 		book.setBookId(Integer.parseInt(request.getParameter("bookId")));
-		Integer copies = Integer.parseInt(request.getParameter("noOfCopies"));
-		LibrarianService service = new LibrarianService();
+		loan.setBook(book);
+		Borrower borrower = new Borrower();
+		borrower.setCardNo(Integer.parseInt(request.getParameter("cardNo")));
+		loan.setBorrower(borrower);
+		Branch branch = new Branch();
+		branch.setBranchNo(Integer.parseInt(request.getParameter("branchNo")));
+		loan.setBranch(branch);
+		BorrowerService service = new BorrowerService();
 		try {
-			service.updateCopies(br, book, copies);
+			service.startLoan(loan);
+			request.setAttribute("authCardNo", request.getParameter("cardNo"));
 		} catch (SQLException e) {
-			request.setAttribute("message",
-					"<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
+			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
-		request.setAttribute("message",
-				"<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Stock successfully updated. </div>");
-	
-	}
-	
-	private void addStock(HttpServletRequest request) {
-		Branch br = new Branch();
-		br.setBranchNo(Integer.parseInt(request.getParameter("branchId")));
-		Book book = new Book();
-		book.setBookId(Integer.parseInt(request.getParameter("bookId")));
-		Integer copies = Integer.parseInt(request.getParameter("noOfCopies"));
-		LibrarianService service = new LibrarianService();
-		try {
-			service.incrementCopies(br, book, copies);
-		} catch (SQLException e) {
-			request.setAttribute("message",
-					"<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
-			e.printStackTrace();
-		}
-		request.setAttribute("message",
-				"<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Book(s) successfully added to your branch. </div>");
-	
-	}
-
-	private void editBranch(HttpServletRequest request) {
-		Branch g = new Branch();
-		g.setBranchNo(Integer.parseInt(request.getParameter("branchId")));
-		g.setBranchName(request.getParameter("branchName"));
-		g.setBranchAddress(request.getParameter("branchAddress"));
-
-		LibrarianService service = new LibrarianService();
-		try {
-			service.modBranch(g);
-		} catch (SQLException e) {
-			request.setAttribute("message",
-					"<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
-			e.printStackTrace();
-		}
-		request.setAttribute("message",
-				"<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Branch details successfully updated. </div>");
+		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Have fun with the book :D. Please return it in 7 days. </div>");
 	}
 }

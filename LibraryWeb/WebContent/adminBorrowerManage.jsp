@@ -55,7 +55,7 @@ ${message}
 		<table class="table table-striped">
 			<thead>
 				<tr>
-					<th>#</th>
+					<th>Card Number</th>
 					<th>Borrower Name</th>
 					<th>Address</th>
 					<th>Phone</th>
@@ -79,7 +79,7 @@ ${message}
 					<%
 						Integer id = borrowers.indexOf(p) + 1 + ((mod - 1) * 10);
 					%>
-					<td><%=id%></td>
+					<td><%=p.getCardNo()%></td>
 					<td><%=p.getName()%></td>
 					<td><%=p.getAddress()%></td>
 					<td><%=p.getPhone()%></td>
