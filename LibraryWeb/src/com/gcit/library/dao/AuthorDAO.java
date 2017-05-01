@@ -44,8 +44,13 @@ public class AuthorDAO extends BaseDAO{
 		return null;
 	}
 	
-	public List<Author> readAuthorsByName(String  authorName) throws ClassNotFoundException, SQLException{
+	public List<Author> readAuthorsByName(String authorName, Integer pageNo) throws ClassNotFoundException, SQLException{
+		setPageNo(pageNo);
 		return read("select * from tbl_author where authorName like ?", new Object[]{authorName});
+	}
+	
+	public Integer readAuthorsCountByName(String authorName) throws ClassNotFoundException, SQLException{
+		return readInt("select count(*) from tbl_author where authorName like ?", new Object[]{authorName});
 	}
 
 	@Override
@@ -77,6 +82,4 @@ public class AuthorDAO extends BaseDAO{
 	public Integer readAuthorCount() throws ClassNotFoundException, SQLException {
 		return readInt("select count(*) as COUNT from tbl_author", null);
 	}
-
-	
 }

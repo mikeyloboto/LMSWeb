@@ -362,12 +362,61 @@ public class AdminService {
 		return null;
 	}
 	
-	public List<Publisher> getPublishersFromName(int i, String searchString) throws SQLException {
+	public List<Book> getBooksFromName(Integer pageNo, String searchString) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BookDAO bdao = new BookDAO(conn);
+			return bdao.readBookFromName("%" + searchString + "%", pageNo);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+	
+	public List<Author> getAuthorsFromName(Integer pageNo, String searchString) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			AuthorDAO adao = new AuthorDAO(conn);
+			return adao.readAuthorsByName("%" + searchString + "%", pageNo);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+	public List<Genre> getGenresFromName(Integer pageNo, String searchString) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			GenreDAO gdao = new GenreDAO(conn);
+			return gdao.readGenresByName("%" + searchString + "%", pageNo);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+
+
+
+	public List<Publisher> getPublishersFromName(int pageNo, String searchString) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = ConnectionUtil.getConnection();
 			PublisherDAO pdao = new PublisherDAO(conn);
-			return pdao.readPublishersByName("%" + searchString + "%", i);
+			return pdao.readPublishersByName("%" + searchString + "%", pageNo);
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -507,6 +556,53 @@ public class AdminService {
 	}
 	
 
+	public Integer getBooksFromNameCount(String searchString) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			BookDAO bdao = new BookDAO(conn);
+			return bdao.readBookCountByName("%" + searchString + "%");
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+	public Integer getAuthorsFromNameCount(String searchString) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			AuthorDAO adao = new AuthorDAO(conn);
+			return adao.readAuthorsCountByName("%" + searchString + "%");
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+	public Integer getGenresFromNameCount(String searchString) throws SQLException {
+		Connection conn = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			GenreDAO gdao = new GenreDAO(conn);
+			return gdao.readGenresCountByName("%" + searchString + "%");
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.close();
+			}
+		}
+		return null;
+	}
+
+	
 	public Integer getPublishersFromNameCount(String searchString) throws SQLException {
 		Connection conn = null;
 		try {
@@ -756,6 +852,12 @@ public class AdminService {
 			}
 		}
 	}
+
+
+
+
+
+
 
 
 

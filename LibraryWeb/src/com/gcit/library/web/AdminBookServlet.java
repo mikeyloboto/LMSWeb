@@ -46,12 +46,16 @@ public class AdminBookServlet extends HttpServlet {
 		switch (reqUrl) {
 
 		case "/pageAuthors":
-			//pageAuthors(request);
+			// pageAuthors(request);
 			forwardPath = "/adminBookManage.jsp";
 			break;
-		case "/searchAuthors":
-			//String data = searchAuthors(request);
-		//	response.getWriter().write(data);
+		case "/searchBooks":
+			// System.out.println("test");
+			String table = searchBooks(request);
+			String pagination = pageBooks(request);
+			// response.setContentType("application/json");
+			// response.setCharacterEncoding("UTF-8");
+			response.getWriter().write(table + '\n' + pagination);
 			// forwardPath = "/viewauthors.jsp";
 			isAjax = Boolean.TRUE;
 			break;
@@ -65,6 +69,78 @@ public class AdminBookServlet extends HttpServlet {
 			RequestDispatcher rd = request.getRequestDispatcher(forwardPath);
 			rd.forward(request, response);
 		}
+	}
+
+	private String pageBooks(HttpServletRequest request) {
+		String searchString = request.getParameter("searchString");
+		// System.out.println(searchString);
+		AdminService service = new AdminService();
+		StringBuffer strBuf = new StringBuffer();
+		try {
+			// request.setAttribute("authors", service.getAuthorsByName(1,
+			// searchString));
+			Integer count = service.getBooksFromNameCount(searchString);
+			Integer pages = 1;
+			if (count != 0) {
+				if (count % 10 == 0) {
+					pages = count / 10;
+				} else {
+					pages = count / 10 + 1;
+				}
+			}
+			// strBuf.append("<thead><tr><th>#</th><th>Author
+			// Name</th><th>Edit</th><th>Delete</th></tr></thead><tbody>");
+			strBuf.append(
+					"<li><a href=\"#\" aria-label=\"Previous\"> <span	aria-hidden=\"true\">&laquo;</span></a></li>");
+			for (int i = 1; i <= pages; i++) {
+
+				strBuf.append("<li><a href=\"#\" onclick=\"searchBook(" + i + ")\">" + i + "</a></li>");
+			}
+
+			strBuf.append("<li><a href=\"#\" aria-label=\"Next\"> <span aria-hidden=\"true\">&raquo;</span></a></li>");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return strBuf.toString();
+	}
+
+	private String searchBooks(HttpServletRequest request) {
+		String pageNoPar = request.getParameter("pageNo");
+		System.out.println(pageNoPar);
+		Integer pageNo;
+		if (pageNoPar == null)
+			pageNo = 1;
+		else
+			pageNo = Integer.parseInt(pageNoPar);
+		String searchString = request.getParameter("searchString");
+		// System.out.println(searchString);
+		AdminService service = new AdminService();
+		StringBuffer strBuf = new StringBuffer();
+		try {
+			// request.setAttribute("authors", service.getAuthorsByName(1,
+			// searchString));
+			List<Book> books = service.getBooksFromName(pageNo, searchString);
+			System.out.println(books.size());
+			// strBuf.append("<thead><tr><th>#</th><th>Author
+			// Name</th><th>Edit</th><th>Delete</th></tr></thead><tbody>");
+			for (Book a : books) {
+				strBuf.append("<tr><td>" + (books.indexOf(a) + 1 + (pageNo - 1) * 10) + "</td><td>"
+						+ a.getDescription() + "</td>");
+				strBuf.append("<td>" + a.getGenreList() + "</td><td>" + a.getPublisher().getPublisherName() + "</td>");
+
+				strBuf.append("<td><button type=\"button\" class=\"btn btn-primary\""
+						+ " data-toggle=\"modal\" data-target=\"#editBookModal\""
+						+ " href=\"adminBookEdit.jsp?bookId=" + a.getBookId() + "&pageNo=" + pageNo
+						+ "\">Update</button> ");
+				strBuf.append("<a type=\"button\" class=\"btn btn-danger\"" + " href=\"removeBook?bookId="
+						+ a.getBookId() + "\">Delete</a></td></tr>");
+			}
+			// strBuf.append("</tbody>");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return strBuf.toString();
 	}
 
 	/**
@@ -98,14 +174,17 @@ public class AdminBookServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		AdminService service = new AdminService();
 		try {
-			Integer bookId = Integer.parseInt((String)request.getParameter("bookId"));
+			Integer bookId = Integer.parseInt((String) request.getParameter("bookId"));
 			service.removeBook(bookId);
-			request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Book successfully deleted. </div>");
+			request.setAttribute("message",
+					"<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Book successfully deleted. </div>");
 		} catch (NumberFormatException e) {
-			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
+			request.setAttribute("message",
+					"<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		} catch (SQLException e) {
-			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
+			request.setAttribute("message",
+					"<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
 	}
@@ -146,10 +225,12 @@ public class AdminBookServlet extends HttpServlet {
 		try {
 			service.modBook(book);
 		} catch (SQLException e) {
-			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
+			request.setAttribute("message",
+					"<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
-		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Book details successfully updated. </div>");
+		request.setAttribute("message",
+				"<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Book details successfully updated. </div>");
 	}
 
 	private void addBook(HttpServletRequest request) {
@@ -188,10 +269,12 @@ public class AdminBookServlet extends HttpServlet {
 		try {
 			service.addBook(book);
 		} catch (SQLException e) {
-			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
+			request.setAttribute("message",
+					"<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
-		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Book successfully added. </div>");
+		request.setAttribute("message",
+				"<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Book successfully added. </div>");
 	}
 
 }

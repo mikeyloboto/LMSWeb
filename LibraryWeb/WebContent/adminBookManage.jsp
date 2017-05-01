@@ -23,6 +23,31 @@
 	}
 %>
 ${message}
+<script>
+	function searchBook(page) {
+
+		$.ajax({
+			url : "searchBooks",
+			data : {
+				searchString : $('#searchString').val(),
+				pageNo : page
+			}
+		}).done(function(data) {
+			//alert(data);
+			var arr_data = String(data).split("\n");
+			$('#tableBook').html(arr_data[0]);
+			$('#pagination').html(arr_data[1]);
+			
+		})
+	}
+</script>
+<script>
+	function setPageNo(p) {
+		//var but = document.getElementById('#pageNo')
+		//but.value = p;
+		searchBook(p);
+	}
+</script>
 <ol class="breadcrumb">
   <li><a href="index.jsp">Home</a></li>
   <li><a href="admin.jsp">Administrator</a></li>
@@ -36,20 +61,13 @@ ${message}
 	<div class="page-header">
 		<h1>List of Existing Books in LMS</h1>
 	</div>
+	<form action="searchBooks">
+			<input type="text" class="form-control" name="searchString"
+				id="searchString" placeholder="Search" oninput="searchBook(1)">
+		</form>
 	<nav aria-label="Page navigation">
-		<ul class="pagination">
-			<li><a href="#" aria-label="Previous"> <span
-					aria-hidden="true">&laquo;</span>
-			</a></li>
-			<%
-				for (int i = 1; i <= numOfPages; i++) {
-			%>
-			<li><a href="adminBookManage.jsp?pageNo=<%=i%>"><%=i%></a></li>
-			<%
-				}
-			%>
-			<li><a href="#" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-			</a></li>
+		<ul class="pagination" id="pagination">
+		
 		</ul>
 	</nav>
 	<table class="table table-striped">
@@ -63,35 +81,8 @@ ${message}
 				<!-- <th>Delete</th> -->
 			</tr>
 		</thead>
-		<tbody>
-			<%
-				for (Book b : books) {
-					Integer mod = 1;
-					if (request.getParameter("pageNo") != null) {
-						mod = Integer.parseInt(request.getParameter("pageNo"));
-					}
-					Integer pageNo = 1;
-					if (request.getParameter("pageNo") != null) {
-						pageNo = Integer.parseInt(request.getParameter("pageNo"));
-					}
-			%>
-			<tr>
-				<%
-					Integer id = books.indexOf(b) + 1 + ((mod - 1) * 10);
-				%>
-				<td><%=id%></td>
-				<td><%=b.getDescription()%></td>
-				<td><%=b.getGenreList() %></td>
-				<td><%=b.getPublisher().getPublisherName() %></td>
-				<td><button type="button" class="btn btn-primary"
-						data-toggle="modal" data-target="#editBookModal"
-						href="adminBookEdit.jsp?bookId=<%=b.getBookId()%>&pageNo=<%=pageNo%>">Update</button>
-					<a type="button" class="btn btn-danger"
-						href="removeBook?bookId=<%=b.getBookId()%>">Delete</a></td>
-			</tr>
-			<%
-				}
-			%>
+		<tbody id="tableBook">
+			
 		</tbody>
 	</table>
 </div>
@@ -116,5 +107,10 @@ ${message}
 			$(this).removeData();
 		});
 
+	});
+</script>
+<script>
+	$(document).ready ( function(){
+		searchBook(1);
 	});
 </script>

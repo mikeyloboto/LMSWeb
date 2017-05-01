@@ -9,6 +9,7 @@ import java.util.List;
 import com.gcit.library.entity.Author;
 import com.gcit.library.entity.Book;
 import com.gcit.library.entity.Genre;
+import com.gcit.library.entity.Publisher;
 
 public class GenreDAO extends BaseDAO {
 	public GenreDAO(Connection conn) {
@@ -94,6 +95,16 @@ public class GenreDAO extends BaseDAO {
 
 	public Integer readGenreCount() throws ClassNotFoundException, SQLException {
 		return readInt("select count(*) as COUNT from tbl_genre", null);
+	}
+
+	public List<Genre> readGenresByName(String string, Integer pageNo) throws ClassNotFoundException, SQLException {
+		setPageNo(pageNo);
+		return read("select * from tbl_genre where genre_name like ?", new Object[]{string});
+	}
+
+	public Integer readGenresCountByName(String string) throws ClassNotFoundException, SQLException {
+		// TODO Auto-generated method stub
+		return readInt("select count(*) from tbl_genre where genre_name like ?", new Object[]{string});
 	}
 
 }

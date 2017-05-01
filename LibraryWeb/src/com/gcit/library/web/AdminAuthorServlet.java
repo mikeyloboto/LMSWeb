@@ -2,6 +2,7 @@ package com.gcit.library.web;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.gcit.library.entity.Author;
+import com.gcit.library.entity.Publisher;
 import com.gcit.library.service.AdminService;
 
 /**
@@ -41,12 +43,16 @@ public class AdminAuthorServlet extends HttpServlet {
 		switch (reqUrl) {
 
 		case "/pageAuthors":
-			//pageAuthors(request);
+			// pageAuthors(request);
 			forwardPath = "/adminAuthorManage.jsp";
 			break;
 		case "/searchAuthors":
-			//String data = searchAuthors(request);
-		//	response.getWriter().write(data);
+			// System.out.println("test");
+			String table = searchAuthors(request);
+			String pagination = pageAuthors(request);
+			// response.setContentType("application/json");
+			// response.setCharacterEncoding("UTF-8");
+			response.getWriter().write(table + '\n' + pagination);
 			// forwardPath = "/viewauthors.jsp";
 			isAjax = Boolean.TRUE;
 			break;
@@ -85,19 +91,90 @@ public class AdminAuthorServlet extends HttpServlet {
 		RequestDispatcher rd = request.getRequestDispatcher(forwardPath);
 		rd.forward(request, response);
 	}
+	private String pageAuthors(HttpServletRequest request) {
+		String searchString = request.getParameter("searchString");
+		// System.out.println(searchString);
+		AdminService service = new AdminService();
+		StringBuffer strBuf = new StringBuffer();
+		try {
+			// request.setAttribute("authors", service.getAuthorsByName(1,
+			// searchString));
+			Integer count = service.getAuthorsFromNameCount(searchString);
+			Integer pages = 1;
+			if (count != 0) {
+				if (count % 10 == 0) {
+					pages = count / 10;
+				} else {
+					pages = count / 10 + 1;
+				}
+			}
+			// strBuf.append("<thead><tr><th>#</th><th>Author
+			// Name</th><th>Edit</th><th>Delete</th></tr></thead><tbody>");
+			strBuf.append(
+					"<li><a href=\"#\" aria-label=\"Previous\"> <span	aria-hidden=\"true\">&laquo;</span></a></li>");
+			for (int i = 1; i <= pages; i++) {
 
+				strBuf.append("<li><a href=\"#\" onclick=\"searchAuthor(" + i + ")\">" + i + "</a></li>");
+			}
+
+			strBuf.append("<li><a href=\"#\" aria-label=\"Next\"> <span aria-hidden=\"true\">&raquo;</span></a></li>");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return strBuf.toString();
+	}
+
+	private String searchAuthors(HttpServletRequest request) {
+		String pageNoPar = request.getParameter("pageNo");
+		System.out.println(pageNoPar);
+		Integer pageNo;
+		if (pageNoPar == null)
+			pageNo = 1;
+		else
+			pageNo = Integer.parseInt(pageNoPar);
+		String searchString = request.getParameter("searchString");
+		// System.out.println(searchString);
+		AdminService service = new AdminService();
+		StringBuffer strBuf = new StringBuffer();
+		try {
+			// request.setAttribute("authors", service.getAuthorsByName(1,
+			// searchString));
+			List<Author> auths = service.getAuthorsFromName(pageNo, searchString);
+			//System.out.println(auths.size());
+			// strBuf.append("<thead><tr><th>#</th><th>Author
+			// Name</th><th>Edit</th><th>Delete</th></tr></thead><tbody>");
+			for (Author a : auths) {
+				strBuf.append("<tr><td>" + (auths.indexOf(a) + 1 + (pageNo - 1) * 10) + "</td><td>"
+						+ a.getAuthorName() + "</td>");
+				strBuf.append("<td><button type=\"button\" class=\"btn btn-primary\""
+						+ " data-toggle=\"modal\" data-target=\"#editAuthorModal\""
+						+ " href=\"adminAuthorEdit.jsp?authorId=" + a.getAuthorId() + "&pageNo=" + pageNo
+						+ "\">Update</button> ");
+				strBuf.append("<a type=\"button\" class=\"btn btn-danger\"" + " href=\"removeAuthor?authorId="
+						+ a.getAuthorId() + "\">Delete</a></td></tr>");
+			}
+			// strBuf.append("</tbody>");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return strBuf.toString();
+	}
 	private void removeAuthor(HttpServletRequest request) {
 		// TODO Auto-generated method stub
 		AdminService service = new AdminService();
 		try {
-			Integer authorId = Integer.parseInt((String)request.getParameter("authorId"));
+			Integer authorId = Integer.parseInt((String) request.getParameter("authorId"));
 			service.removeAuthor(authorId);
-			request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Author successfully deleted. </div>");
+			request.setAttribute("message",
+					"<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Author successfully deleted. </div>");
 		} catch (NumberFormatException e) {
-			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
+			request.setAttribute("message",
+					"<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		} catch (SQLException e) {
-			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
+			request.setAttribute("message",
+					"<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
 	}
@@ -111,10 +188,12 @@ public class AdminAuthorServlet extends HttpServlet {
 		try {
 			service.modAuthor(author);
 		} catch (SQLException e) {
-			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
+			request.setAttribute("message",
+					"<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
-		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Author details successfully updated. </div>");
+		request.setAttribute("message",
+				"<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Author details successfully updated. </div>");
 	}
 
 	private void addAuthor(HttpServletRequest request) {
@@ -125,10 +204,12 @@ public class AdminAuthorServlet extends HttpServlet {
 		try {
 			service.addAuthor(a);
 		} catch (SQLException e) {
-			request.setAttribute("message", "<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
+			request.setAttribute("message",
+					"<div class=\"alert alert-danger\" role=\"alert\"> <strong>Oops!</strong> Something went wrong. </div>");
 			e.printStackTrace();
 		}
-		request.setAttribute("message", "<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Author successfully added. </div>");
+		request.setAttribute("message",
+				"<div class=\"alert alert-success\" role=\"alert\"> <strong>Success!</strong> Author successfully added. </div>");
 	}
 
 }

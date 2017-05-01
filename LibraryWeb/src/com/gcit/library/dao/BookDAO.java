@@ -176,5 +176,14 @@ public class BookDAO extends BaseDAO {
 		return readInt("select count(*) as COUNT from tbl_book_copies where branchId = ? and noOfCopies > 0", new Object[]{branch.getBranchNo()});
 	}
 
+	public List<Book> readBookFromName(String string, Integer pageNo) throws ClassNotFoundException, SQLException {
+		setPageNo(pageNo);
+		return read("select * from tbl_book where title like ?", new Object[]{string});
+	}
+
+	public Integer readBookCountByName(String string) throws ClassNotFoundException, SQLException {
+		return readInt("select count(*) from tbl_book where title like ?", new Object[]{string});
+	}
+
 
 }

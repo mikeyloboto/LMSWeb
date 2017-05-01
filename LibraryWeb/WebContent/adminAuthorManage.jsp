@@ -23,6 +23,31 @@
 	}
 %>
 ${message}
+<script>
+	function searchAuthor(page) {
+
+		$.ajax({
+			url : "searchAuthors",
+			data : {
+				searchString : $('#searchString').val(),
+				pageNo : page
+			}
+		}).done(function(data) {
+			//alert(data);
+			var arr_data = String(data).split("\n");
+			$('#tableAuthor').html(arr_data[0]);
+			$('#pagination').html(arr_data[1]);
+			
+		})
+	}
+</script>
+<script>
+	function setPageNo(p) {
+		//var but = document.getElementById('#pageNo')
+		//but.value = p;
+		searchAuthor(p);
+	}
+</script>
 <ol class="breadcrumb">
 	<li><a href="index.jsp">Home</a></li>
 	<li><a href="admin.jsp">Administrator</a></li>
@@ -36,8 +61,12 @@ ${message}
 		<div class="page-header">
 			<h1>List of Existing Authors in LMS</h1>
 		</div>
+		<form action="searchAuthors">
+			<input type="text" class="form-control" name="searchString"
+				id="searchString" placeholder="Search" oninput="searchAuthor(1)">
+		</form>
 		<nav aria-label="Page navigation">
-			<ul class="pagination">
+			<ul class="pagination" id="pagination">
 				<li><a href="#" aria-label="Previous"> <span
 						aria-hidden="true">&laquo;</span>
 				</a></li>
@@ -61,7 +90,7 @@ ${message}
 					<!-- <th>Delete</th> -->
 				</tr>
 			</thead>
-			<tbody>
+			<tbody id="tableAuthor">
 				<%
 					for (Author a : authors) {
 						Integer mod = 1;
@@ -112,5 +141,10 @@ ${message}
 			$(this).removeData();
 		});
 
+	});
+</script>
+<script>
+	$(document).ready ( function(){
+		searchAuthor(1);
 	});
 </script>
