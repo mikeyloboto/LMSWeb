@@ -37,7 +37,7 @@ ${message}
 			var arr_data = String(data).split("\n");
 			$('#tableAuthor').html(arr_data[0]);
 			$('#pagination').html(arr_data[1]);
-			
+
 		})
 	}
 </script>
@@ -91,32 +91,7 @@ ${message}
 				</tr>
 			</thead>
 			<tbody id="tableAuthor">
-				<%
-					for (Author a : authors) {
-						Integer mod = 1;
-						if (request.getParameter("pageNo") != null) {
-							mod = Integer.parseInt(request.getParameter("pageNo"));
-						}
-						Integer pageNo = 1;
-						if (request.getParameter("pageNo") != null) {
-							pageNo = Integer.parseInt(request.getParameter("pageNo"));
-						}
-				%>
-				<tr>
-					<%
-						Integer id = authors.indexOf(a) + 1 + ((mod - 1) * 10);
-					%>
-					<td><%=id%></td>
-					<td><%=a.getAuthorName()%></td>
-					<td><button type="button" class="btn btn-primary"
-							data-toggle="modal" data-target="#editAuthorModal"
-							href="adminAuthorEdit.jsp?authorId=<%=a.getAuthorId()%>&pageNo=<%=pageNo%>">Update</button>
-						<a type="button" class="btn btn-danger"
-						href="removeAuthor?authorId=<%=a.getAuthorId()%>">Delete</a></td>
-				</tr>
-				<%
-					}
-				%>
+
 			</tbody>
 		</table>
 	</div>
@@ -144,7 +119,7 @@ ${message}
 	});
 </script>
 <script>
-	$(document).ready ( function(){
+	$(document).ready(function() {
 		searchAuthor(1);
 	});
 </script>
